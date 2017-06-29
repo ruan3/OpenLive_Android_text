@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\libs\agora-rtc-sdk.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1ef27e6472659acb8ad5e4de03803b15783110b2">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\agora-rtc-sdk_ebdf75b942ecc91a66f3e5be83587c67de38a3bd.jar" />
+    </item>
+
+</items>

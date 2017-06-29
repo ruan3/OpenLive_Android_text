@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="libvideoprp-unspecified">
+    <CLASSES>
+      <root url="jar://D:/eclipse64/eclipse_ADT/sdk/.android/build-cache/3403292331ea07ee66c475c797751b4adbe523de/output/jars/classes.jar!/" />
+      <root url="file://D:/eclipse64/eclipse_ADT/sdk/.android/build-cache/3403292331ea07ee66c475c797751b4adbe523de/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
