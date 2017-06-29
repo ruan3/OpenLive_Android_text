@@ -6,7 +6,7 @@ public interface AGEventHandler {
     void onJoinChannelSuccess(String channel, int uid, int elapsed);
 
     void onUserOffline(int uid, int reason);
-    //搞测试
+    //搞测试储存
     void onExtraCallback(int type, Object... data);
 
     int EVENT_TYPE_ON_DATA_CHANNEL_MSG = 3;
