@@ -11,4 +11,5 @@ public interface ILoginView {
 
     public void doLoginResult(int code,String result);
     public void doRegister(int code,String result);
+    public void doResetPwd(int code,String reslut);
 }
