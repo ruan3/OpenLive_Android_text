@@ -4,6 +4,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -25,7 +26,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.UpdateListener;
 import io.agora.openlive.R;
+import io.agora.openlive.ui.MainActivity;
 import io.agora.presenter.ILoginRegisterPresenter;
 import io.agora.presenter.IloginRegisterPresenterImpl;
 
@@ -163,7 +168,7 @@ public class LoginActivity extends Activity implements ILoginView{
                 if(paramsRegister.weight == 4.25){
 
                     Snackbar.make(relativeLayout,"注册搞事情！",Snackbar.LENGTH_SHORT).show();
-                    loginPresenter.doRegister("111","");
+                    loginPresenter.doRegister(register_email.getText().toString(),register_pass.getText().toString());
                     return;
 
                 }
@@ -251,7 +256,7 @@ public class LoginActivity extends Activity implements ILoginView{
 
                 if(paramsLogin.weight == 4.25){
                     Snackbar.make(relativeLayout2,"登录进去了，搞事情！",Snackbar.LENGTH_SHORT).show();
-                    loginPresenter.doLogin("111","");
+                    loginPresenter.doLogin(login_email.getText().toString(),login_pass.getText().toString());
                     return;
                 }
                 login_email.setVisibility(View.VISIBLE);
@@ -331,6 +336,13 @@ public class LoginActivity extends Activity implements ILoginView{
                 relativeLayout2.setLayoutParams(paramsLogin);
             }
         });
+
+        forget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginPresenter.forgetPwd("1633486734@qq.com");
+            }
+        });
     }
 
     private int inDp(int dp) {
@@ -343,11 +355,33 @@ public class LoginActivity extends Activity implements ILoginView{
 
     @Override
     public void doLoginResult(int code, String result) {
-        Toast.makeText(context,"执行登录方法",Toast.LENGTH_SHORT).show();
+        if(code == 0){
+            Toast.makeText(context,"登录成功"+result,Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(context,MainActivity.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(context,"登录失败"+result,Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void doRegister(int code, String result) {
-        Toast.makeText(context,"执行注册方法",Toast.LENGTH_SHORT).show();
+        if(code == 0){
+            Toast.makeText(context,"注册成功"+result,Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(context,"注册失败"+result,Toast.LENGTH_SHORT).show();
+        }
+
     }
+
+    @Override
+    public void doResetPwd(int code, String reslut) {
+        if(code == 0){
+            Toast.makeText(context,reslut,Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(context,reslut,Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 }
