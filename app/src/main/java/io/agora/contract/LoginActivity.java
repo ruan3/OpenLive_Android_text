@@ -26,10 +26,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tuyenmonkey.mkloader.MKLoader;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
+import io.agora.model.MyUser;
 import io.agora.openlive.R;
+import io.agora.openlive.ui.HomeActivity;
 import io.agora.openlive.ui.MainActivity;
 import io.agora.presenter.ILoginRegisterPresenter;
 import io.agora.presenter.IloginRegisterPresenterImpl;
@@ -62,6 +66,8 @@ public class LoginActivity extends Activity implements ILoginView{
     private ImageView logo;
     FrameLayout mainFrame;
     private Context context;
+
+    MKLoader loading;
 
     ILoginRegisterPresenter loginPresenter;
 
@@ -101,12 +107,27 @@ public class LoginActivity extends Activity implements ILoginView{
         mainFrame = (FrameLayout) findViewById(R.id.mainFrame);
         img = (LinearLayout) findViewById(R.id.img);
         forget = (TextView) findViewById(R.id.forget);
+        loading = (MKLoader) findViewById(R.id.loading);
 
         logo = new ImageView(this);
         logo.setImageResource(R.drawable.logo);
         logo.setLayoutParams(frameParams);
 
         loginPresenter = new IloginRegisterPresenterImpl(this);
+
+        BmobUser bmobUser = BmobUser.getCurrentUser();
+        if(bmobUser != null){
+            // 允许用户使用应用
+            //BmobUser中的特定属性
+            String username = (String) BmobUser.getObjectByKey("username");
+            //MyUser中的扩展属性
+            String password = (String) BmobUser.getObjectByKey("password");
+            login_email.setText(username);
+            login_pass.setText(password);
+        }else{
+            //缓存用户对象为空时， 可打开用户注册界面…
+
+        }
 
     }
 
@@ -166,6 +187,8 @@ public class LoginActivity extends Activity implements ILoginView{
             public void onClick(View v) {
 
                 if(paramsRegister.weight == 4.25){
+
+                    loading.setVisibility(View.VISIBLE);
 
                     Snackbar.make(relativeLayout,"注册搞事情！",Snackbar.LENGTH_SHORT).show();
                     loginPresenter.doRegister(register_email.getText().toString(),register_pass.getText().toString());
@@ -255,6 +278,7 @@ public class LoginActivity extends Activity implements ILoginView{
             public void onClick(View v) {
 
                 if(paramsLogin.weight == 4.25){
+                    loading.setVisibility(View.VISIBLE);
                     Snackbar.make(relativeLayout2,"登录进去了，搞事情！",Snackbar.LENGTH_SHORT).show();
                     loginPresenter.doLogin(login_email.getText().toString(),login_pass.getText().toString());
                     return;
@@ -355,9 +379,10 @@ public class LoginActivity extends Activity implements ILoginView{
 
     @Override
     public void doLoginResult(int code, String result) {
+        loading.setVisibility(View.GONE);
         if(code == 0){
             Toast.makeText(context,"登录成功"+result,Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(context,MainActivity.class);
+            Intent intent = new Intent(context,HomeActivity.class);
             startActivity(intent);
         }else{
             Toast.makeText(context,"登录失败"+result,Toast.LENGTH_SHORT).show();
@@ -366,6 +391,7 @@ public class LoginActivity extends Activity implements ILoginView{
 
     @Override
     public void doRegister(int code, String result) {
+        loading.setVisibility(View.GONE);
         if(code == 0){
             Toast.makeText(context,"注册成功"+result,Toast.LENGTH_SHORT).show();
         }else{
@@ -376,8 +402,10 @@ public class LoginActivity extends Activity implements ILoginView{
 
     @Override
     public void doResetPwd(int code, String reslut) {
+        loading.setVisibility(View.GONE);
         if(code == 0){
             Toast.makeText(context,reslut,Toast.LENGTH_SHORT).show();
+
         }else{
             Toast.makeText(context,reslut,Toast.LENGTH_SHORT).show();
         }
