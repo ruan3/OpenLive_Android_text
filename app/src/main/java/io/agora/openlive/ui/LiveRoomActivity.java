@@ -30,7 +30,14 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
+import io.agora.model.LiveVideos;
 import io.agora.openlive.R;
 import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
@@ -422,7 +429,35 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     }
 
     public void onClickClose(View view) {
-        finish();
+
+        //先查询到数据的id
+        BmobQuery<LiveVideos> query = new BmobQuery<>();
+        query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
+        query.findObjects(new FindListener<LiveVideos>() {
+            @Override
+            public void done(List<LiveVideos> list, BmobException e) {
+                if(list!=null&&list.size()>0){
+                    //查询成功，得到当前liveVideoId
+                    String liveId = list.get(0).getObjectId();
+                    LiveVideos liveVideos = new LiveVideos();
+                    liveVideos.setLiving(false);
+                    //更新主播状态
+                    liveVideos.update(liveId, new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if(e==null){
+                                finish();
+                            }else{
+                                Log.e("Com","离开主播界面失败---->"+e.toString());
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+
+
     }
 
     public void onShowHideClicked(View view) {

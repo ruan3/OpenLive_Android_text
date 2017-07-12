@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tuyenmonkey.mkloader.MKLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ public class HomeActivity extends BaseActivity {
     List<Fragment> fragments;
     SpaceTabLayout tabLayout;
     TextView tv_title;
+    MKLoader loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +50,7 @@ public class HomeActivity extends BaseActivity {
         fragments.add(new OtherFragment());
         fragments.add(new MineFragment());
 
+        loading = (MKLoader) findViewById(R.id.loading);
         final CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_main);
         tv_title = (TextView) findViewById(R.id.tv_title);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);

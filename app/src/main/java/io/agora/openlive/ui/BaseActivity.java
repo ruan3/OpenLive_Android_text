@@ -1,7 +1,9 @@
 package io.agora.openlive.ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import cn.bmob.v3.Bmob;
 import io.agora.common.Constant;
 import io.agora.openlive.AGApplication;
 import io.agora.openlive.BuildConfig;
@@ -31,11 +36,18 @@ import java.util.Arrays;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private final static Logger log = LoggerFactory.getLogger(BaseActivity.class);
+    /**
+     * SDK初始化也可以放到Application中
+     */
+    public static String APPID = "e0e5821ab961e7607a39f5926cae7a51";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+//        Bmob.initialize(this, APPID);
+        
         final View layout = findViewById(Window.ID_ANDROID_CONTENT);
         ViewTreeObserver vto = layout.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -73,6 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             }
         }, 500);
+//        setTranslucentStatus();
     }
 
     private boolean checkSelfPermissions() {
@@ -196,5 +209,37 @@ public abstract class BaseActivity extends AppCompatActivity {
                 + ", " + ConstantApp.APP_BUILD_DATE + ", SDK: " + Constant.MEDIA_SDK_VERSION + ")";
 //        TextView textVersion = (TextView) findViewById(R.id.app_version);
 //        textVersion.setText(version);
+    }
+
+    /**
+     * 5.0以上系统状态栏透明,国产手机默认透明
+     */
+    protected void setTranslucentStatus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.TRANSPARENT);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
+    /**
+     * 读取状态栏的高度
+     *
+     * @param context
+     * @return
+     */
+
+    protected int getStatusBarHeight(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+            return resourceId > 0 ? context.getResources().getDimensionPixelSize(resourceId) : 0;
+        } else {
+            return 0;
+        }
     }
 }
