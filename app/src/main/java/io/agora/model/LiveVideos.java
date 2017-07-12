@@ -48,6 +48,16 @@ public class LiveVideos extends BmobObject{
     Integer audience;
     String LiveTitle;
 
+    public boolean isLiving() {
+        return isLiving;
+    }
+
+    public void setLiving(boolean living) {
+        isLiving = living;
+    }
+
+    boolean isLiving;
+
     public BmobFile getImageUrl() {
         return Image;
     }
