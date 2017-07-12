@@ -2,13 +2,17 @@ package io.agora.presenter;
 
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.ValueEventListener;
 import io.agora.contract.fragment.IContentFragment;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
@@ -32,13 +36,19 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
     public void getData() {
 
         final BmobQuery<LiveVideos> liveVideos = new BmobQuery<>();
+        liveVideos.addWhereEqualTo("isLiving",true);
         liveVideos.findObjects(new FindListener<LiveVideos>() {
             @Override
             public void done(List<LiveVideos> list, BmobException e) {
 
                 if(list != null){
                     //查询数据成功
-                    IContentFragment.getDatas(0,list);
+                    if(list.size()>0){
+                        IContentFragment.getDatas(0,list);
+                    }else{
+                        Log.e("Com","查詢列表返回沒有數據");
+                        IContentFragment.getDatas(1,list);
+                    }
                 }else{
                     IContentFragment.getDataFailed(-1,e.toString());
                 }
@@ -70,6 +80,31 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
 
             }
         });
+
+    }
+
+    @Override
+    public void RealTimeCallBack() {
+
+        final BmobRealTimeData rtd = new BmobRealTimeData();
+        rtd.start(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(JSONObject data) {
+                Log.e("Com","实时数据onDataChange：data = "+data);
+                IContentFragment.RealTimeCallBack(1,null);
+            }
+
+            @Override
+            public void onConnectCompleted(Exception ex) {
+                Log.e("Com","实时数据连接成功:"+rtd.isConnected());
+                if(rtd.isConnected()){
+                    // 监听表更新
+                    rtd.subTableUpdate("LiveVideos");
+                }
+            }
+        });
+
 
     }
 }

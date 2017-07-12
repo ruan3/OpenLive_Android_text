@@ -11,4 +11,5 @@ public interface IContentFragmentPresenter {
 
     public void getData();
     public void setData();
+    public void RealTimeCallBack();
 }
