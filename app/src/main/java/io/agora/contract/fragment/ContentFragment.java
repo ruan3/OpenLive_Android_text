@@ -70,6 +70,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
 
         loading.setVisibility(View.VISIBLE);
         tv_noData_tips.setVisibility(View.GONE);
+        mAdapter = new ContentAdapter(context,videos);
         iContentFragmentPresenter = new IContentFragmentPresenterImpl(this);
         iContentFragmentPresenter.getData();
         mRefreshLayout.setColorSchemeResources(R.color.colorPrimary, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
