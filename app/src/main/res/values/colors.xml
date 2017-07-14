@@ -2,11 +2,16 @@
 <resources>
     <color name="agora_blue">#FF00A0EB</color>
 
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#EB413D</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="background">#F6F6F6</color>
 
     <color name="lightColorAccent">#30FF4081</color>
 
     <color name="dark_black">#CC262626</color>
+
+    <color name="text_strong">#070707</color>
+    <color name="text_nomal">#7C8282</color>
+    <color name="text_light">#BCC4C7</color>
 </resources>
