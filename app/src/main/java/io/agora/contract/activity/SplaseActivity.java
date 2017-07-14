@@ -47,6 +47,7 @@ public class SplaseActivity extends BaseActivity {
                 }else{
                     //缓存用户对象为空时， 可打开用户注册界面…
                     intent = new Intent(SplaseActivity.this, LoginActivity.class);
+                    startActivity(intent);
                 }
 
 

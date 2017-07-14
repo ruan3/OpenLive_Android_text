@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,18 +19,28 @@ import com.smile.filechoose.api.FileChooserListener;
 import com.smile.filechoose.api.FileChooserManager;
 
 import java.io.File;
+import java.util.List;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.ProgressCallback;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
+import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.ui.BaseActivity;
+import io.agora.openlive.ui.LiveRoomActivity;
+import io.agora.openlive.ui.MainActivity;
+import io.agora.presenter.ICreateRoomPresenter;
+import io.agora.presenter.ICreateRoomPresenterImpl;
+import io.agora.rtc.Constants;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -50,11 +61,14 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
     ChosenFile choosedFile;
     private FileChooserManager fm;
 
+    ICreateRoomPresenter iCreateRoomPresenter;
+    File Image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_room);
+        iCreateRoomPresenter = new ICreateRoomPresenterImpl();
     }
 
     @Override
@@ -66,11 +80,7 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         iv_imge_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(CreateRoomActivity.this,"加入图片",Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(Intent.ACTION_PICK, null);
-//                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//                        "image/*");
-//                startActivityForResult(intent, 0x1);
+                iCreateRoomPresenter.getImage();
                 insertDataWithOne();
             }
         });
@@ -79,7 +89,43 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         btn_confrim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(CreateRoomActivity.this,"确认",Toast.LENGTH_SHORT).show();
+                if(!TextUtils.isEmpty(et_room_title.getText().toString())&&Image!=null){
+
+                    /**
+                     * 上传图片
+                     */
+//                    uploadMovoieFile(Image);
+
+                    UpdateRoomState(Image);
+                }
+            }
+        });
+
+    }
+
+    public void UpdateRoomState(final File file){
+
+        //先查询到数据的id
+        BmobQuery<LiveVideos> query = new BmobQuery<>();
+        query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
+        query.findObjects(new FindListener<LiveVideos>() {
+            @Override
+            public void done(List<LiveVideos> list, BmobException e) {
+                if(list!=null&&list.size()>0){
+
+                    //查询成功，得到当前liveVideoId
+                     String liveId = list.get(0).getObjectId();
+                    final LiveVideos liveVideos = list.get(0);
+                    Log.e("Com","更新图片上一句走不走----->");
+                    UpdateRoom(file,liveVideos);
+
+                }else if(e!=null){
+                    Log.e("Com","查找報錯了------>"+e.toString());
+                    uploadMovoieFile(Image);
+                }else if(e == null){
+                    Log.e("Com","查找報錯了------>e==null");
+                    uploadMovoieFile(Image);
+                }
             }
         });
 
@@ -88,6 +134,73 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
 
     @Override
     protected void deInitUIandEvent() {
+
+    }
+
+    public void UpdateRoom(File file,final LiveVideos liveVideos){
+
+        dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        dialog.setTitle("创建房间中...");
+        dialog.setIndeterminate(false);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+        final BmobFile bmobFile = new BmobFile(file);
+
+        bmobFile.uploadObservable(new ProgressCallback() {
+            @Override
+            public void onProgress(Integer integer, long l) {
+                dialog.setProgress(integer);
+            }
+        }).doOnNext(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                url = bmobFile.getUrl();
+
+            }
+        }).concatMap(new Func1<Void, Observable<Void>>() {//将bmobFile保存到movie表中
+            @Override
+            public Observable<Void> call(Void aVoid) {
+                Log.e("Com", "使用rxjava更新有没有");
+
+//                            liveVideos.setAnchorName(BmobUser.getCurrentUser(MyUser.class));
+                liveVideos.setLiving(true);
+                liveVideos.setLiveTitle(et_room_title.getText().toString());
+                liveVideos.setImageUrl(bmobFile);
+                liveVideos.increment("LiveTimes",1);
+                liveVideos.setAudience(0);
+
+                return upDateObservable(liveVideos);
+            }
+        }).subscribe(new Subscriber<Void>() {
+            @Override
+            public void onCompleted() {
+
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("Com", "屌你更新图片出错了----->"+e.toString());
+                Toast.makeText(CreateRoomActivity.this,"屌你出错了----->"+e.toString(),Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                choosedFile=null;
+            }
+
+            @Override
+            public void onNext(Void s) {
+                                dialog.dismiss();
+                                choosedFile=null;
+                                Log.e("Com","完成？？");
+                                Intent i = new Intent(CreateRoomActivity.this, LiveRoomActivity.class);
+                                i.putExtra(ConstantApp.ACTION_KEY_CROLE, Constants.CLIENT_ROLE_BROADCASTER);
+                                i.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME, BmobUser.getCurrentUser().getObjectId());
+                                startActivity(i);
+                finish();
+//
+            }
+        });
 
     }
 
@@ -101,9 +214,9 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
                 fm.setFileChooserListener(this);
             }
             Log.i("Com", "Probable file size: " + fm.queryProbableFileSize(data.getData(), this));
-            if (data != null) {
+            /*if (data != null) {
                 iv_imge_add.setImageURI(data.getData());
-            }
+            }*/
             fm.submit(requestCode, data);
         }
 
@@ -119,9 +232,9 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
             public void run() {
                 Log.i("life", choosedFile.getFilePath());
 //                showFileDetails(file);
-                File mp3 = new File(choosedFile.getFilePath());
+                Image = new File(choosedFile.getFilePath());
                 iv_imge_add.setImageURI(Uri.parse(choosedFile.getFilePath()));
-                uploadMovoieFile(mp3);
+//                uploadMovoieFile(Image);
             }
         });
     }
@@ -165,34 +278,34 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
     private void uploadMovoieFile(File file) {
         dialog = new ProgressDialog(this);
         dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        dialog.setTitle("上传中...");
+        dialog.setTitle("创建房间中...");
         dialog.setIndeterminate(false);
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
         final BmobFile bmobFile = new BmobFile(file);
+        //这个用到了类似rxjava的方式开发
         bmobFile.uploadObservable(new ProgressCallback() {//上传文件操作
             @Override
             public void onProgress(Integer value, long total) {
-//                log("uploadMovoieFile-->onProgress:"+value);
                 dialog.setProgress(value);
             }
         }).doOnNext(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
                 url = bmobFile.getUrl();
-//                log("上传成功："+url+","+bmobFile.getFilename());
 
             }
         }).concatMap(new Func1<Void, Observable<String>>() {//将bmobFile保存到movie表中
             @Override
             public Observable<String> call(Void aVoid) {
 
-                LiveVideos liveVideos = new LiveVideos();
+                LiveVideos  liveVideos = new LiveVideos();
                 liveVideos.setAnchorName(BmobUser.getCurrentUser(MyUser.class));
                 liveVideos.setImageUrl(bmobFile);
                 liveVideos.setLiveTitle(et_room_title.getText().toString());
-
+                liveVideos.setLiving(true);
+                liveVideos.increment("LiveTimes",1);
 
                 return saveObservable(liveVideos);
             }
@@ -209,12 +322,12 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         }).subscribe(new Subscriber<String>() {
             @Override
             public void onCompleted() {
-//                log("--onCompleted--");
+
+
             }
 
             @Override
             public void onError(Throwable e) {
-//                log("--onError--:"+e.getMessage());
                 Toast.makeText(CreateRoomActivity.this,"屌你出错了----->"+e.toString(),Toast.LENGTH_LONG).show();
                 dialog.dismiss();
                 choosedFile=null;
@@ -224,10 +337,54 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
             public void onNext(String s) {
                 dialog.dismiss();
                 choosedFile=null;
-//                log("download的文件地址："+s);
+                Log.e("Com","完成？？");
+                Intent i = new Intent(CreateRoomActivity.this, LiveRoomActivity.class);
+                i.putExtra(ConstantApp.ACTION_KEY_CROLE, Constants.CLIENT_ROLE_BROADCASTER);
+                i.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME, BmobUser.getCurrentUser().getObjectId());
+                startActivity(i);
+                finish();
             }
         });
     }
+
+    /**
+     * 先查询是否有房间了，没有就新开一个房间，如果有了，就更新状态就可以了
+     */
+    /*private liveVideos saveOrUpdateRoom(BmobFile bmobFile){
+
+        final LiveVideos liveVideos;
+        //先查询到数据的id
+        BmobQuery<LiveVideos> query = new BmobQuery<>();
+        query.addWhereEqualTo("AnchorName", BmobUser.getCurrentUser().getObjectId());
+        query.findObjects(new FindListener<LiveVideos>() {
+            @Override
+            public void done(List<LiveVideos> list, BmobException e) {
+                if(list!=null&&list.size()>0){
+
+
+                    //查询成功，得到当前liveVideoId
+                    String liveId = list.get(0).getObjectId();
+                    liveVideos = new LiveVideos();
+                    liveVideos.setLiving(false);
+                    //更新主播状态
+                    liveVideos.update(liveId, new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if(e==null){
+                                return liveVideos;
+                            }else{
+                                Log.e("Com","离开主播界面失败---->"+e.toString());
+                            }
+                        }
+                    });
+
+                }else if(e==null){
+
+                }
+            }
+        });
+        return
+    }*/
 
     /**
      * save的Observable
@@ -237,5 +394,7 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
     private Observable<String> saveObservable(BmobObject obj){
         return obj.saveObservable();
     }
+
+    private Observable<Void> upDateObservable(BmobObject obj){ return obj.updateObservable();}
 
 }
