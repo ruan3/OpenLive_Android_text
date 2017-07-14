@@ -47,6 +47,17 @@ public class LiveVideos extends BmobObject{
     String RoomID;
     Integer audience;
     String LiveTitle;
+    Integer LiveTimes;
+
+    public Integer getAudienceTimes() {
+        return AudienceTimes;
+    }
+
+    public void setAudienceTimes(Integer audienceTimes) {
+        AudienceTimes = audienceTimes;
+    }
+
+    Integer AudienceTimes;
 
     public boolean isLiving() {
         return isLiving;
