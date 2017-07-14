@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -17,12 +18,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.ufreedom.floatingview.Floating;
+import com.ufreedom.floatingview.FloatingBuilder;
+import com.ufreedom.floatingview.FloatingElement;
+import com.ufreedom.floatingview.effect.TranslateFloatingTransition;
+import com.ufreedom.floatingview.spring.ReboundListener;
+import com.ufreedom.floatingview.spring.SpringHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +48,9 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
+import io.agora.common.Constant;
+import io.agora.contract.animation.PlaneFloating;
+import io.agora.contract.animation.StarFloating;
 import io.agora.model.LiveVideos;
 import io.agora.openlive.R;
 import io.agora.openlive.model.AGEventHandler;
@@ -47,6 +61,7 @@ import io.agora.openlive.model.VideoStatusData;
 import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
+import io.agora.utils.UIUtils;
 
 public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
@@ -56,15 +71,42 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     private RelativeLayout mSmallVideoViewDock;
 
+    private LinearLayout ly_leaving;//主播离开提示
+
     Context context;
 
+    int isAudience = 0;//判别主播与观众
+
+    String anchorID;//主播的id
+
     private final HashMap<Integer, SurfaceView> mUidsList = new HashMap<>(); // uid = 0 || uid == EngineConfig.mUid
+
+    RecyclerView msgListView;//显示消息的recycleVIew
+
+    /**
+     * 评论UI
+     */
+    LinearLayout ly_comment;
+    ImageView iv_star;
+    ImageView iv_paper_airplane;
+    ImageView iv_like;
+    private Floating mFloating;
+    private int mScreenWidth;
+    private int mScreenHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_live_room);
         context = this;
+        mFloating = new Floating(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+        }
+
+        mScreenWidth = UIUtils.getScreenWidth(this);
+        mScreenHeight = UIUtils.getScreenWidth(this);
     }
 
     @Override
@@ -91,16 +133,18 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
         Intent i = getIntent();
         int cRole = i.getIntExtra(ConstantApp.ACTION_KEY_CROLE, 0);
-
+        isAudience = cRole;
         if (cRole == 0) {
             throw new RuntimeException("Should not reach here");
         }
 
         String roomName = i.getStringExtra(ConstantApp.ACTION_KEY_ROOM_NAME);
 
+        anchorID = roomName;
+
         doConfigEngine(cRole);//创建直播需要的引擎，根据房间号
 
-        //这个空间继承与recleyView,内部实现了adapter
+        //这个空间继承与recleyView,内部实现了adapter,这个是显示界面的view
         mGridVideoViewContainer = (GridVideoViewContainer) findViewById(R.id.grid_video_view_container);
         mGridVideoViewContainer.setItemEventHandler(new VideoViewEventListener() {
             @Override
@@ -121,6 +165,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         ImageView button1 = (ImageView) findViewById(R.id.btn_1);
         ImageView button2 = (ImageView) findViewById(R.id.btn_2);
         ImageView button3 = (ImageView) findViewById(R.id.btn_3);
+
+        ly_leaving = (LinearLayout) findViewById(R.id.ly_leaving);
+        ly_leaving.setVisibility(View.GONE);
 
         ImageView btn_message = (ImageView) findViewById(R.id.btn_message);
 
@@ -178,17 +225,80 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         textRoomName.setText(roomName);
 
         initMessageUI();
+        InitCommentUI();
     }
 
     private InChannelMessageListAdapter mMsgAdapter;
     private ArrayList<Message> mMsgList;
 
+    /**
+     * 初始化评论UI
+     */
+    private void InitCommentUI(){
+
+        ly_comment = (LinearLayout) findViewById(R.id.ly_comment);
+        iv_star = (ImageView) findViewById(R.id.iv_star);
+        iv_like = (ImageView) findViewById(R.id.iv_like);
+        iv_paper_airplane = (ImageView) findViewById(R.id.iv_paper_airplane);
+
+        //给星监听
+        iv_star.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                sendChannelMsg("sugar");
+
+                StarFloating(v);
+
+            }
+        });
+
+        //喜欢监听
+        iv_like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                sendChannelMsg("cool~");
+                likeFloating(v);
+
+            }
+        });
+
+        //纸飞机监听
+        iv_paper_airplane.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                sendChannelMsg("paper_air_plane");
+                PlaneFloating(v);
+
+            }
+        });
+
+    }
+
+    /**
+     * 喜欢点赞
+     * @param v
+     */
+    private void likeFloating(View v){
+        FloatingElement floatingElement = new FloatingBuilder()
+                .anchorView(iv_like)
+                .targetView(R.layout.ic_like)
+                .floatingTransition(new TranslateFloatingTransition())
+                .build();
+        mFloating.startFloating(floatingElement);
+    }
+
+    /**
+     * 初始化消息输入框
+     */
     private void initMessageUI(){
 
         Log.e("Com","------initMessageUi----");
 
         mMsgList = new ArrayList<>();
-        RecyclerView msgListView = (RecyclerView) findViewById(R.id.msg_list);
+        msgListView = (RecyclerView) findViewById(R.id.msg_list);
         mMsgAdapter = new InChannelMessageListAdapter(context,mMsgList);
         mMsgAdapter.setHasStableIds(true);
         msgListView.setAdapter(mMsgAdapter);
@@ -196,6 +306,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         msgListView.addItemDecoration(new MessageListDecoration());
     }
 
+    /**
+     * 更新消息列表
+     * @param msg
+     */
     private void notifyMessageChanged(Message msg){
         mMsgList.add(msg);
 
@@ -208,8 +322,13 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
             }
         }
             mMsgAdapter.notifyDataSetChanged();
+            msgListView.scrollToPosition(mMsgList.size()-1);
     }
 
+    /**
+     * 隐藏消息输入框
+     * @param view
+     */
     public void onClickHideIME(View view) {
         log.debug("onClickHideIME " + view);
 
@@ -222,6 +341,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     private int mDataStreamId;
 
+    /**
+     * 显示输入消息框
+     */
     private void showMessageEditContainer() {
         findViewById(R.id.bottom_action_container).setVisibility(View.GONE);
 //        findViewById(R.id.bottom_action_end_call).setVisibility(View.GONE);
@@ -256,6 +378,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         openIME(edit);
     }
 
+    /**
+     * 发消息
+     * @param msgStr
+     */
     private void sendChannelMsg(String msgStr){
         RtcEngine rtcEngine = rtcEngine();
         if(mDataStreamId <= 0){
@@ -279,6 +405,11 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         Log.e("Com","------sendChannelMsg----");
     }
 
+    /**
+     * 接受消息回调
+     * @param type
+     * @param data
+     */
     @Override
     public void onExtraCallback(final int type, final Object... data) {
 
@@ -295,6 +426,11 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         });
     }
 
+    /**
+     * 接受消息Handler
+     * @param type
+     * @param data
+     */
     private void doHandleExtraCallback(int type, Object... data) {
         int peerUid;
 //        boolean muted;
@@ -306,8 +442,17 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 peerUid = (Integer) data[0];
                 Log.e("Com","peerUid----->"+peerUid);
                 final byte[] content = (byte[]) data[1];
-                Log.e("Com","content----->"+content);
-                notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
+                Log.e("Com","content----->"+new String(content));
+                String contentStr = new String(content);
+                if(contentStr.equals("cool~")){
+                    likeFloating(iv_like);
+                }else if(contentStr.equals("sugar")) {
+                    StarFloating(iv_star);
+                }else if(contentStr.equals("paper_air_plane")) {
+                    PlaneFloating(iv_paper_airplane);
+                }else {
+                    notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
+                }
 
                 break;
 
@@ -316,7 +461,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 String description = (String) data[1];
                 Log.e("Com","error----->"+error);
                 Log.e("Com","description----->"+description);
-                notifyMessageChanged(new Message(new User(0, null), error + " " + description));
+//                notifyMessageChanged(new Message(new User(0, null), error + " " + description));
 
                 break;
             }
@@ -330,6 +475,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     }
 
 
+    /**
+     * 主播角色UI
+     * @param button1
+     * @param button2
+     * @param button3
+     */
     private void broadcasterUI(ImageView button1, ImageView button2, ImageView button3) {
         button1.setTag(true);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -370,6 +521,72 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isBroadcaster(isAudience)) {
+            //主播退出的方式
+            //先查询到数据的id
+            BmobQuery<LiveVideos> query = new BmobQuery<>();
+            query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
+            query.findObjects(new FindListener<LiveVideos>() {
+                @Override
+                public void done(List<LiveVideos> list, BmobException e) {
+                    if(list!=null&&list.size()>0){
+                        //查询成功，得到当前liveVideoId
+                        String liveId = list.get(0).getObjectId();
+                        LiveVideos liveVideos = list.get(0);
+                        liveVideos.setLiving(false);
+                        //更新主播状态
+                        liveVideos.update(liveId, new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                    Log.e("Com","离开主播界面成功---->"+e.toString());
+                                }else{
+                                    Log.e("Com","离开主播界面失败---->"+e.toString());
+                                }
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        }else{
+            //观众退出的方式
+            //先查询到数据的id
+            BmobQuery<LiveVideos> query = new BmobQuery<>();
+            query.addWhereEqualTo("anchorName", anchorID);
+            query.findObjects(new FindListener<LiveVideos>() {
+                @Override
+                public void done(List<LiveVideos> list, BmobException e) {
+                    if(list!=null&&list.size()>0){
+                        //查询成功，得到当前liveVideoId
+                        String liveId = list.get(0).getObjectId();
+                        LiveVideos liveVideos = list.get(0);
+                        liveVideos.increment("audience",-1);
+                        //更新主播状态
+                        liveVideos.update(liveId, new UpdateListener() {
+                            @Override
+                            public void done(BmobException e) {
+                                if(e==null){
+                                    Log.e("Com","离开主播界面成功---->"+e.toString());
+                                }else{
+                                    Log.e("Com","离开主播界面失败---->"+e.toString());
+                                }
+                            }
+                        });
+
+                    }
+                }
+            });
+
+        }
+
+
     }
 
     /**
@@ -424,38 +641,14 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     private void doLeaveChannel() {
         worker().leaveChannel(config().mChannel);
         if (isBroadcaster()) {
+
             worker().preview(false, null, 0);
         }
     }
 
     public void onClickClose(View view) {
 
-        //先查询到数据的id
-        BmobQuery<LiveVideos> query = new BmobQuery<>();
-        query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
-        query.findObjects(new FindListener<LiveVideos>() {
-            @Override
-            public void done(List<LiveVideos> list, BmobException e) {
-                if(list!=null&&list.size()>0){
-                    //查询成功，得到当前liveVideoId
-                    String liveId = list.get(0).getObjectId();
-                    LiveVideos liveVideos = new LiveVideos();
-                    liveVideos.setLiving(false);
-                    //更新主播状态
-                    liveVideos.update(liveId, new UpdateListener() {
-                        @Override
-                        public void done(BmobException e) {
-                            if(e==null){
-                                finish();
-                            }else{
-                                Log.e("Com","离开主播界面失败---->"+e.toString());
-                            }
-                        }
-                    });
-
-                }
-            }
-        });
+        finish();
 
 
     }
@@ -490,6 +683,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
     @Override
     public void onFirstRemoteVideoDecoded(int uid, int width, int height, int elapsed) {
+        //这个应该是在子线程一直运行的，监听所在的房间是否有人直播
         doRenderRemoteUi(uid);
     }
 
@@ -563,6 +757,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                     log.debug("doRenderRemoteUi VIEW_TYPE_SMALL" + " " + (uid & 0xFFFFFFFFL) + " " + (bigBgUid & 0xFFFFFFFFL));
                     switchToSmallVideoView(bigBgUid);
                 }
+                ly_leaving.setVisibility(View.GONE);
             }
         });
     }
@@ -597,6 +792,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     @Override
     public void onUserOffline(int uid, int reason) {
         log.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
+        //这个是监听，主播离线的操作
         doRemoveRemoteUi(uid);
     }
 
@@ -649,6 +845,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 } else {
                     switchToSmallVideoView(bigBgUid);
                 }
+                ly_leaving.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -726,5 +923,56 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         }
         recycler.setVisibility(View.VISIBLE);
         mSmallVideoViewDock.setVisibility(View.VISIBLE);
+    }
+
+
+    /**
+     * 给星星动画
+     * @param v
+     */
+    private void StarFloating(final View v){
+
+        ImageView imageView = new ImageView(context);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(iv_star.getMeasuredWidth(), iv_star.getMeasuredHeight()));
+        imageView.setImageResource(R.drawable.sugar);
+
+        final FloatingElement floatingElement = new FloatingBuilder()
+                .anchorView(v)
+                .targetView(imageView)
+                .floatingTransition(new StarFloating())
+                .build();
+
+        SpringHelper.createWithBouncinessAndSpeed(0f,1f,11,15).reboundListener(new ReboundListener() {
+            @Override
+            public void onReboundUpdate(double currentValue) {
+                v.setScaleX((float) currentValue);
+                v.setScaleY((float) currentValue);
+            }
+
+            @Override
+            public void onReboundEnd() {
+                mFloating.startFloating(floatingElement);
+            }
+        }).start();
+
+    }
+
+    /**
+     * 飞机的动画
+     * @param v
+     */
+    private void PlaneFloating(View v){
+
+        ImageView imageView = new ImageView(context);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(iv_paper_airplane.getMeasuredWidth(), iv_paper_airplane.getMeasuredHeight()));
+        imageView.setImageResource(R.drawable.paper_airplane);
+
+        FloatingElement floatingElement = new FloatingBuilder()
+                .anchorView(v)
+                .targetView(imageView)
+                .floatingTransition(new PlaneFloating(mScreenHeight))
+                .build();
+        mFloating.startFloating(floatingElement);
+
     }
 }
