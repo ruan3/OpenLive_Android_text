@@ -14,4 +14,8 @@
     <color name="text_strong">#070707</color>
     <color name="text_nomal">#7C8282</color>
     <color name="text_light">#BCC4C7</color>
+
+    <color name="gray5">#d8d8d8</color>
+    <color name="blues">#4c6791</color>
+    <color name="black">#2A2A2A</color>
 </resources>

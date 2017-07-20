@@ -9,4 +9,7 @@
     <dimen name="bottom_op_item_w">30dp</dimen>
     <dimen name="bottom_op_item_h">30dp</dimen>
 
+    <!--主界面整体字体大小-->
+    <dimen name="normal_text_size">15sp</dimen>
+
 </resources>
