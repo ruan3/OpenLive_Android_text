@@ -1,5 +1,6 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.luolc.emojirain.EmojiRainLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
+             android:id="@+id/fl_emoji_container"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,6 +20,30 @@
         android:layout_marginTop="60dp"
         android:layout="@layout/small_video_view_dock" />
 
+    <LinearLayout
+        android:id="@+id/ly_leaving"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/leaving"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="主播已离开"
+            android:textSize="@dimen/tips_size"
+            />
+
+    </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -27,11 +52,11 @@
             android:id="@+id/top_area"
             android:layout_width="wrap_content"
             android:layout_height="54dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -95,7 +120,8 @@
                     android:layout_width="54dp"
                     android:layout_height="match_parent"
                     android:scaleType="center"
-                    android:src="@drawable/btn_request_broadcast" />
+                    android:src="@drawable/btn_request_broadcast"
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/btn_2"
@@ -121,6 +147,7 @@
                 </ImageView>
 
             </io.agora.ui.AGLinearLayout>
+
             <LinearLayout
                 android:id="@+id/msg_input_container"
                 android:layout_width="match_parent"
@@ -161,6 +188,46 @@
             android:layout_height="144dp"
             android:layout_above="@id/bottom_container" />
 
+        <LinearLayout
+            android:id="@+id/ly_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/bottom_container"
+            android:layout_alignBaseline="@id/msg_list"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_star"
+                android:layout_width="@dimen/bottom_op_item_w"
+                android:layout_height="@dimen/bottom_op_item_h"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/sugar"
+                android:padding="10dp"
+                android:scaleType="center" />
+
+            <ImageView
+                android:id="@+id/iv_paper_airplane"
+                android:layout_width="@dimen/bottom_op_item_w"
+                android:layout_height="@dimen/bottom_op_item_h"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/paper_airplane"
+                android:padding="10dp"
+                android:scaleType="center" />
+
+            <ImageView
+                android:id="@+id/iv_like"
+                android:layout_width="@dimen/bottom_op_item_w"
+                android:layout_height="@dimen/bottom_op_item_h"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/like"
+                android:padding="10dp"
+                android:scaleType="center" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
-</FrameLayout>
+
+</com.luolc.emojirain.EmojiRainLayout>

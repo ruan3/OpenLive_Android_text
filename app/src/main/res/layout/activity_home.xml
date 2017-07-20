@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+<android.support.design.widget.CoordinatorLayout
+
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
@@ -20,3 +26,16 @@
         app:starting_position="one" />
 
 </android.support.design.widget.CoordinatorLayout>
+
+    <com.tuyenmonkey.mkloader.MKLoader
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        app:mk_type="FourPulse"
+        app:mk_color="@color/colorPrimary"
+        />
+
+</FrameLayout>

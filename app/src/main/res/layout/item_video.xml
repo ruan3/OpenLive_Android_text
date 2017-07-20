@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="230dp"
-    android:layout_margin="5dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    android:layout_margin="5dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:id="@+id/rl_root"
         android:background="@drawable/row_ripple"
         >
 
@@ -34,8 +32,22 @@
             android:text="作者"
             />
 
-        <ImageView
-            android:id="@+id/topicImg"
+
+        <TextView
+            android:id="@+id/online_audience"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="12sp"
+            android:layout_marginLeft="4dp"
+            android:layout_below="@id/title"
+            android:text="在线人数:7"
+            android:layout_marginRight="5dp"
+            />
+
+
+        <io.agora.contract.view.CircleImageView
+            android:id="@+id/cv_user_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_alignParentBottom="true"
@@ -48,13 +60,16 @@
             android:id="@+id/source"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/topicImg"
+            android:layout_alignBottom="@id/cv_user_icon"
             android:layout_marginLeft="4dp"
-            android:layout_toRightOf="@id/topicImg"
+            android:layout_toRightOf="@id/cv_user_icon"
             android:textColor="@color/text_nomal"
             android:textSize="12sp"
             android:layout_marginBottom="4dp"
             android:text="来源"
             />
+
+
+
     </RelativeLayout>
 </android.support.v7.widget.CardView>
