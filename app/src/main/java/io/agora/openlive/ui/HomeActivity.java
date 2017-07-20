@@ -5,12 +5,17 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tuyenmonkey.mkloader.MKLoader;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +24,7 @@ import eu.long1.spacetablayout.SpaceTabLayout;
 import io.agora.contract.fragment.ContentFragment;
 import io.agora.contract.fragment.MineFragment;
 import io.agora.contract.fragment.OtherFragment;
+import io.agora.model.EventMsg;
 import io.agora.openlive.R;
 
 /**
@@ -38,8 +44,15 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_home);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e("Com","主页面start()"+EventBus.TAG);
     }
 
     @Override
@@ -85,4 +98,30 @@ public class HomeActivity extends BaseActivity {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EventMsg eventMsg){
+
+        Log.e("Com","EventBus主页面接受到消息----->"+eventMsg.getMsg());
+        if(eventMsg!=null){
+
+            if("getOut".equals(eventMsg.getMsg())){
+                finish();
+            }
+        }
+
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("Com","主页面stop()");
+//        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

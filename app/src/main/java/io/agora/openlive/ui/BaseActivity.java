@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -241,5 +242,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e("Com","BaseActivity--start()");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("Com","BaseActivity--Onstop()");
     }
 }

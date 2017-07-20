@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.luolc.emojirain.EmojiRainLayout;
 import com.ufreedom.floatingview.Floating;
 import com.ufreedom.floatingview.FloatingBuilder;
 import com.ufreedom.floatingview.FloatingElement;
@@ -93,6 +94,23 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     private Floating mFloating;
     private int mScreenWidth;
     private int mScreenHeight;
+
+    /**
+     * 更新点赞数到后台
+     */
+    private int likes = 0;
+
+    /**
+     * 更新礼物数到后台
+     */
+    private int gifts = 0;
+
+    /**
+     * 仿微信下动物雨
+     * @param savedInstanceState
+     */
+    EmojiRainLayout emojiContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,7 +244,35 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
         initMessageUI();
         InitCommentUI();
+
+        //下动物雨的容器
+        emojiContainer = (EmojiRainLayout) findViewById(R.id.fl_emoji_container);
+        initEmojiContainer();
     }
+
+    /**
+     * 初始化下动物雨的控件
+     */
+    private void initEmojiContainer(){
+
+        emojiContainer.addEmoji(R.drawable.emoji_1);
+        emojiContainer.addEmoji(R.drawable.emoji_2);
+        emojiContainer.addEmoji(R.drawable.emoji_3);
+        emojiContainer.addEmoji(R.drawable.emoji_4);
+        emojiContainer.addEmoji(R.drawable.emoji_5);
+
+    }
+
+
+
+    /**
+     * 启动下动物雨动画
+     */
+    private void startEmoji(){
+        emojiContainer.stopDropping();
+        emojiContainer.startDropping();
+    }
+
 
     private InChannelMessageListAdapter mMsgAdapter;
     private ArrayList<Message> mMsgList;
@@ -446,11 +492,18 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 String contentStr = new String(content);
                 if(contentStr.equals("cool~")){
                     likeFloating(iv_like);
+                    likes++;
                 }else if(contentStr.equals("sugar")) {
                     StarFloating(iv_star);
+                    gifts++;
                 }else if(contentStr.equals("paper_air_plane")) {
                     PlaneFloating(iv_paper_airplane);
-                }else {
+                    gifts++;
+                }else if(contentStr.equals("下小精灵")){
+                    gifts++;
+                    startEmoji();
+                    notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
+                } else {
                     notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
                 }
 
@@ -539,14 +592,18 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                         String liveId = list.get(0).getObjectId();
                         LiveVideos liveVideos = list.get(0);
                         liveVideos.setLiving(false);
+                        Log.e("Com","当前主播获得点赞数---->"+likes);
+                        liveVideos.increment("likes",likes);
+                        liveVideos.increment("gift_times",gifts);
                         //更新主播状态
                         liveVideos.update(liveId, new UpdateListener() {
                             @Override
                             public void done(BmobException e) {
                                 if(e==null){
-                                    Log.e("Com","离开主播界面成功---->"+e.toString());
+                                    Log.e("Com","LivingRoom-主播离开房间成功---->");
+                                    likes = 0;
                                 }else{
-                                    Log.e("Com","离开主播界面失败---->"+e.toString());
+                                    Log.e("Com","livingRoom-主播离开房间失败---->"+e.toString());
                                 }
                             }
                         });
@@ -573,9 +630,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                             @Override
                             public void done(BmobException e) {
                                 if(e==null){
-                                    Log.e("Com","离开主播界面成功---->"+e.toString());
+                                    Log.e("Com","livingRoom-观众离开房间成功---->");
                                 }else{
-                                    Log.e("Com","离开主播界面失败---->"+e.toString());
+                                    Log.e("Com","livingRoom-观众离开房间失败---->"+e.toString());
                                 }
                             }
                         });
@@ -792,6 +849,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     @Override
     public void onUserOffline(int uid, int reason) {
         log.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
+        Log.e("Com","测试主播是否下线的东西---"+reason);
         //这个是监听，主播离线的操作
         doRemoveRemoteUi(uid);
     }
@@ -842,10 +900,15 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
                 if (mViewType == VIEW_TYPE_DEFAULT || uid == bigBgUid) {
                     switchToDefaultVideoView();
+
                 } else {
                     switchToSmallVideoView(bigBgUid);
                 }
-                ly_leaving.setVisibility(View.VISIBLE);
+                Log.e("Com","排查正常直播提示错误----->1");
+                if(!isBroadcaster(isAudience)){
+                    ly_leaving.setVisibility(View.VISIBLE);
+                }
+
             }
         });
     }
