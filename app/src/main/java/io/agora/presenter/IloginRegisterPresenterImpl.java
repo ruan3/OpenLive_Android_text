@@ -89,7 +89,6 @@ public class IloginRegisterPresenterImpl implements ILoginRegisterPresenter {
         myUser.setUsername(uid);
         myUser.setPassword(pwd);
         myUser.setAge(18);
-        myUser.setEmail("1633486734@qq.com");
         myUser.setSex(true);
         myUser.signUp(new SaveListener<MyUser>() {
             @Override
