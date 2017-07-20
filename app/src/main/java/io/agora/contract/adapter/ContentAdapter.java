@@ -26,7 +26,9 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
+import io.agora.contract.view.CircleImageView;
 import io.agora.model.LiveVideos;
+import io.agora.model.MyUser;
 import io.agora.openlive.R;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.ui.LiveRoomActivity;
@@ -68,15 +70,18 @@ public class ContentAdapter extends RecyclerView.Adapter {
         if(videos.get(position).getAnchorName()!=null){
             Log.e("Com","获取到的用户名----->"+videos.get(position).getAnchorName().getObjectId());
             //注意：在这里获取到的只有objectid,只能再通过objectid去查询具体信息
-            BmobQuery<BmobUser> query = new BmobQuery<BmobUser>();
+            BmobQuery<MyUser> query = new BmobQuery<MyUser>();
             query.addWhereEqualTo("objectId",videos.get(position).getAnchorName().getObjectId());
-            query.findObjects(new FindListener<BmobUser>() {
+            query.findObjects(new FindListener<MyUser>() {
                 @Override
-                public void done(List<BmobUser> list, BmobException e) {
+                public void done(List<MyUser> list, BmobException e) {
                     if(list != null){
-                        String userName = list.get(0).getUsername();
+                        String userName = list.get(0).getUser_id_name();
                         Log.e("Com","获取到的用户名通过----->"+userName);
                         ((contentHodler) holder).source.setText(userName);
+                        BmobFile user_icon = list.get(0).getHead_icon();
+                        Glide.with(context).load(user_icon.getUrl()).into( ((contentHodler)holder).cv_user_icon);
+
                     }else{
                         Log.e("Com","获取到的用户名报错----->"+e.toString());
                     }
@@ -131,6 +136,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
         ImageView cover;
         RelativeLayout rl_root;
         TextView online_audience;
+        CircleImageView cv_user_icon;
 
 
         public contentHodler(View itemView) {
@@ -140,6 +146,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
             cover = (ImageView) itemView.findViewById(R.id.cover);
             rl_root = (RelativeLayout) itemView.findViewById(R.id.rl_root);
             online_audience = (TextView) itemView.findViewById(R.id.online_audience);
+            cv_user_icon = (CircleImageView) itemView.findViewById(R.id.cv_user_icon);
         }
 
 
