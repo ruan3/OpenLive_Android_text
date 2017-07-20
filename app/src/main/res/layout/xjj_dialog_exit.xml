@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+     >
+
+    <RelativeLayout
+        android:id="@+id/rl_login"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@drawable/sdk_edit_two_bg"
+        android:paddingBottom="10dip"
+        android:paddingLeft="18dip"
+        android:paddingRight="18dip" >
+
+        <LinearLayout
+            android:id="@+id/ll_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dip"
+            android:background="#ffffff"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/iv_logo"
+                android:layout_width="0.0px"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1.0"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:layout_width="1dip"
+                android:layout_height="40dp"
+                android:background="@color/gray5" />
+
+            <TextView
+                android:id="@+id/tv_copy"
+                android:layout_width="0.0px"
+                android:layout_height="40dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1.0"
+                android:gravity="center|left"
+                android:text="温馨提示"
+                android:textColor="@color/blues"
+                android:textSize="18dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_login_frame"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ll_logo"
+            android:background="@drawable/sdk_edit_two_bg"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="是否退出登录?"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+          
+        </LinearLayout>
+        
+        <LinearLayout 
+            
+             android:layout_width="match_parent"
+            android:layout_height="38dip"
+             android:layout_below="@id/ll_login_frame"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
+            
+            <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="80dp"
+            android:layout_height="38dip"
+            android:background="@drawable/sdk_login_in"
+            android:text="确 定"
+            android:textColor="@android:color/white"
+            android:layout_marginRight="20dp"
+            android:textSize="16dip" />
+            
+            <Button
+            android:id="@+id/btn_cancle"
+            android:layout_width="80dp"
+            android:layout_height="38dip"
+            android:background="@drawable/sdk_login_in"
+            android:text="取消"
+            android:textColor="@android:color/white"
+            android:textSize="16dip" />
+            
+            
+        </LinearLayout>
+
+
+      
+    </RelativeLayout>
+
+</RelativeLayout>
