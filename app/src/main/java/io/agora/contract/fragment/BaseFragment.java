@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ public abstract  class BaseFragment extends Fragment {
     FrameLayout fl_content;
     TextView tv_title;
     boolean isInitComplete = false;
+    Toolbar toolbar;
 
 
     @Override
@@ -44,7 +46,13 @@ public abstract  class BaseFragment extends Fragment {
         fl_content = (FrameLayout) view.findViewById(R.id.fl_content);
         fl_content.addView(initView());
         tv_title = (TextView) view.findViewById(R.id.tv_title);
-        tv_title.setText(setTitile());
+        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        if(setTitile().equals("我的")){
+            toolbar.setVisibility(View.GONE);
+        }else{
+            toolbar.setVisibility(View.VISIBLE);
+            tv_title.setText(setTitile());
+        }
         isInitComplete = true;
         return view;
 

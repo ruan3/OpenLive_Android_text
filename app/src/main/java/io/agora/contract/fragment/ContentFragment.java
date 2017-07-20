@@ -91,7 +91,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
        tv_noData_tips.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-                loading.setVisibility(View.VISIBLE);
+               loading.setVisibility(View.VISIBLE);
                tv_noData_tips.setVisibility(View.GONE);
                iContentFragmentPresenter.getData();
            }
