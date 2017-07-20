@@ -384,6 +384,7 @@ public class LoginActivity extends Activity implements ILoginView{
             Toast.makeText(context,"登录成功"+result,Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(context,HomeActivity.class);
             startActivity(intent);
+            finish();
         }else{
             Toast.makeText(context,"登录失败"+result,Toast.LENGTH_SHORT).show();
         }
