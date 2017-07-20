@@ -120,7 +120,7 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
                     UpdateRoom(file,liveVideos);
 
                 }else if(e!=null){
-                    Log.e("Com","查找報錯了------>"+e.toString());
+                    Log.e("Com","查找報錯了------>");
                     uploadMovoieFile(Image);
                 }else if(e == null){
                     Log.e("Com","查找報錯了------>e==null");
@@ -306,6 +306,8 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
                 liveVideos.setLiveTitle(et_room_title.getText().toString());
                 liveVideos.setLiving(true);
                 liveVideos.increment("LiveTimes",1);
+                liveVideos.setGift_times(0);
+                liveVideos.setLikes(0);
 
                 return saveObservable(liveVideos);
             }
