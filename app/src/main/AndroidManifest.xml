@@ -50,6 +50,7 @@
             android:label="@string/label_settings" />
         <activity android:name=".ui.HomeActivity"
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             ></activity>
         <activity android:name="io.agora.contract.activity.SplaseActivity">
             <intent-filter>
@@ -58,6 +59,7 @@
             </intent-filter>
         </activity>
         <activity android:name="io.agora.contract.activity.CreateRoomActivity"></activity>
+        <activity android:name="io.agora.contract.activity.MineSettingActivity"></activity>
     </application>
 
 </manifest>
