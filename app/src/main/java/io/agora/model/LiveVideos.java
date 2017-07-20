@@ -47,17 +47,37 @@ public class LiveVideos extends BmobObject{
     String RoomID;
     Integer audience;
     String LiveTitle;
+
+    public Integer getGift_times() {
+        return gift_times;
+    }
+
+    public void setGift_times(Integer gift_times) {
+        this.gift_times = gift_times;
+    }
+
+    Integer gift_times;
+
+    public Integer getLiveTimes() {
+        return LiveTimes;
+    }
+
+    public void setLiveTimes(Integer liveTimes) {
+        LiveTimes = liveTimes;
+    }
+
     Integer LiveTimes;
 
-    public Integer getAudienceTimes() {
-        return AudienceTimes;
+
+    public Integer getLikes() {
+        return likes;
     }
 
-    public void setAudienceTimes(Integer audienceTimes) {
-        AudienceTimes = audienceTimes;
+    public void setLikes(Integer likes) {
+        this.likes = likes;
     }
 
-    Integer AudienceTimes;
+    Integer likes;
 
     public boolean isLiving() {
         return isLiving;
