@@ -11,6 +11,14 @@
         android:minHeight="?attr/actionBarSize"
         >
 
+        <Button
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ic_back"
+            android:padding="5dp"
+            android:onClick="back"
+            />
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
