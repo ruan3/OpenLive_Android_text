@@ -14,6 +14,7 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.ValueEventListener;
 import io.agora.contract.fragment.IContentFragment;
+import io.agora.contract.utils.LogUtils;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
 
@@ -35,6 +36,7 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
     @Override
     public void getData() {
 
+        LogUtils.e("查询数据开始");
         final BmobQuery<LiveVideos> liveVideos = new BmobQuery<>();
         liveVideos.addWhereEqualTo("isLiving",true);
         liveVideos.findObjects(new FindListener<LiveVideos>() {
@@ -45,8 +47,10 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
                     //查询数据成功
                     if(list.size()>0){
                         IContentFragment.getDatas(0,list);
+                        LogUtils.e("查询数据成功");
                     }else{
-                        Log.e("Com","查詢列表返回沒有數據");
+//                        Log.e("Com","查詢列表返回沒有數據");
+                        LogUtils.e("查詢列表返回沒有數據");
                         IContentFragment.getDatas(1,list);
                     }
                 }else{

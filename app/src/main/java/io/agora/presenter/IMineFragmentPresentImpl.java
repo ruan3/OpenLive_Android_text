@@ -1,11 +1,17 @@
 package io.agora.presenter;
 
+import android.util.Log;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.BmobRealTimeData;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.ValueEventListener;
 import io.agora.contract.fragment.IMineFragment;
 import io.agora.contract.utils.LogUtils;
 import io.agora.model.LiveVideos;
@@ -50,6 +56,31 @@ public class IMineFragmentPresentImpl implements IMineFragmentPresenter {
 
             }
         });
+
+    }
+
+    @Override
+    public void RealTimeCallBack() {
+
+        final BmobRealTimeData rtd = new BmobRealTimeData();
+        rtd.start(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(JSONObject data) {
+                Log.e("Com","实时数据onDataChange：data = "+data);
+                iMineFragment.RealTimeCallBack(1,null);
+            }
+
+            @Override
+            public void onConnectCompleted(Exception ex) {
+                Log.e("Com","实时数据连接成功:"+rtd.isConnected());
+                if(rtd.isConnected()){
+                    // 监听表更新
+                    rtd.subTableUpdate("LiveVideos");
+                }
+            }
+        });
+
 
     }
 }

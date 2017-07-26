@@ -3,13 +3,13 @@ package io.agora.presenter;
 /**
  * File Name:
  * Author:      ruan
- * Write Dates: 2017/7/20
+ * Write Dates: 2017/7/24
  * Description:
  */
 
-public interface IMineFragmentPresenter {
+public interface IOtherFragmentPresenter {
 
     public void getData();
-    public void RealTimeCallBack();
+    public void processData(String result);
 
 }
