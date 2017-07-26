@@ -1,5 +1,7 @@
 package io.agora.contract.fragment;
 
+import java.util.List;
+
 import io.agora.model.LiveVideos;
 
 /**
@@ -12,5 +14,6 @@ import io.agora.model.LiveVideos;
 public interface IMineFragment {
 
     public void getData(int code, String e, LiveVideos liveVideos);
+    public void RealTimeCallBack(int code,List<LiveVideos> videos);
 
 }

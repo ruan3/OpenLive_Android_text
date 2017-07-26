@@ -21,6 +21,7 @@ import java.util.List;
 
 import io.agora.contract.activity.CreateRoomActivity;
 import io.agora.contract.adapter.ContentAdapter;
+import io.agora.contract.utils.LogUtils;
 import io.agora.model.LiveVideos;
 import io.agora.openlive.R;
 import io.agora.presenter.IContentFragmentPresenter;
@@ -48,6 +49,9 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
     TextView tv_noData_tips;
     FrameLayout fl_content;
 
+    private Boolean isFrist = true;
+
+
     @Override
     public View initView() {
         View view = View.inflate(context, R.layout.fragment_content,null);
@@ -66,13 +70,28 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void initData() {
 
-        Log.e("Com","ContentFragment------->InitData()");
+//        Log.e("Com","ContentFragment------->InitData()");
 
-        loading.setVisibility(View.VISIBLE);
-        tv_noData_tips.setVisibility(View.GONE);
-        mAdapter = new ContentAdapter(context,videos);
+        LogUtils.e("ContentFragment------->InitData()");
+
+        if(videos!=null&&videos.size()>0){
+
+            tv_noData_tips.setVisibility(View.GONE);
+            mAdapter = new ContentAdapter(context,videos);
+            mRecyclerView.setAdapter(mAdapter);
+        }else{
+            tv_noData_tips.setVisibility(View.VISIBLE);
+        }
+
         iContentFragmentPresenter = new IContentFragmentPresenterImpl(this);
-        iContentFragmentPresenter.getData();
+        if(isFrist){
+            tv_noData_tips.setVisibility(View.GONE);
+            loading.setVisibility(View.VISIBLE);
+            iContentFragmentPresenter.getData();
+            iContentFragmentPresenter.RealTimeCallBack();
+            isFrist = false;
+        }
+
         mRefreshLayout.setColorSchemeResources(R.color.colorPrimary, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
         mRefreshLayout.setOnRefreshListener(this);
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 2);
@@ -96,7 +115,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
                iContentFragmentPresenter.getData();
            }
        });
-        iContentFragmentPresenter.RealTimeCallBack();
+
 
     }
 
@@ -124,6 +143,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
         mAdapter = new ContentAdapter(context,videos);
         mRecyclerView.setAdapter(mAdapter);
         if(code == 0){
+            this.videos = videos;
             tv_noData_tips.setVisibility(View.GONE);
             loading.setVisibility(View.GONE);
             mAdapter.notifyDataSetChanged();
@@ -134,6 +154,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
 
         }else if(code == 1){
             videos.clear();
+            this.videos = videos;
 //            mAdapter.notifyDataSetChanged();
             loading.setVisibility(View.GONE);
             tv_noData_tips.setVisibility(View.VISIBLE);

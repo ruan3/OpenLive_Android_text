@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
 import cn.bmob.v3.BmobUser;
 import io.agora.contract.activity.MineSettingActivity;
 import io.agora.contract.utils.LogUtils;
@@ -15,6 +17,8 @@ import io.agora.contract.view.CircleImageView;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
+import io.agora.presenter.IContentFragmentPresenter;
+import io.agora.presenter.IContentFragmentPresenterImpl;
 import io.agora.presenter.IMineFragmentPresentImpl;
 import io.agora.presenter.IMineFragmentPresenter;
 
@@ -34,6 +38,13 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
     TextView tv_like;
     TextView tv_live;
     TextView tv_gift;
+    private boolean isFirst = true;
+
+    int like;
+    int live;
+    int gift;
+
+    IContentFragmentPresenter iContentFragmentPresenter;
 
     @Override
     public View initView() {
@@ -50,8 +61,17 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
     @Override
     public void initData() {
 
-        iMineFragmentPresenter = new IMineFragmentPresentImpl(this);
-        iMineFragmentPresenter.getData();
+
+        tv_like.setText("喜欢："+like);
+        tv_live.setText("直播："+live);
+        tv_gift.setText("礼物："+gift);
+
+        if(isFirst){
+            iMineFragmentPresenter = new IMineFragmentPresentImpl(this);
+            iMineFragmentPresenter.getData();
+            iMineFragmentPresenter.RealTimeCallBack();
+            isFirst = false;
+        }
 
         //点击设置跳转到个人信息设置界面
         setting.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +105,9 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         if(code == 0){
 
             LogUtils.e("获取到对应信息---->"+liveVideos.getLikes());
+            like = liveVideos.getLikes();
+            live = liveVideos.getLiveTimes();
+            gift = liveVideos.getGift_times();
             tv_like.setText("喜欢："+liveVideos.getLikes());
             tv_live.setText("直播："+liveVideos.getLiveTimes());
             tv_gift.setText("礼物："+liveVideos.getGift_times());
@@ -94,4 +117,16 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         }
 
     }
+
+    @Override
+    public void RealTimeCallBack(int code, List<LiveVideos> videos) {
+
+        if(iMineFragmentPresenter!=null){
+
+            iMineFragmentPresenter.getData();
+        }
+
+
+    }
+
 }
