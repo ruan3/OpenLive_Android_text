@@ -37,7 +37,7 @@ import io.agora.presenter.IMineSettingPresenter;
 import io.agora.presenter.IMineSettingPresenterImpl;
 
 /**
- * File Name:
+ * File Name: 我的界面
  * Author:      ruan
  * Write Dates: 2017/7/19
  * Description:
@@ -51,6 +51,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
     RelativeLayout rl_login_out;
     RelativeLayout rl_set_name;
     EditText et_set_userName;
+    TextView tv_set_userCode;
 
     FileChooserManager fm;
     IMineSettingPresenter iMineSettingPresenter;
@@ -78,6 +79,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
         rl_login_out = (RelativeLayout) findViewById(R.id.rl_login_out);
         rl_set_name = (RelativeLayout) findViewById(R.id.rl_set_name);
         et_set_userName = (EditText) findViewById(R.id.et_set_userName);
+        tv_set_userCode = (TextView) findViewById(R.id.tv_set_userCode);
         fm = new FileChooserManager(this);
         iMineSettingPresenter = new IMineSettingPresenterImpl(fm,this);
 
@@ -136,6 +138,12 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
         if(!TextUtils.isEmpty(user.getUser_id_name())){
 
             tv_set_userName.setText(user.getUser_id_name());
+        }
+
+        if(!TextUtils.isEmpty(user.getUsername())){
+
+            tv_set_userCode.setText(user.getUsername());
+
         }
 
         rl_login_out.setOnClickListener(new View.OnClickListener() {
@@ -237,10 +245,15 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
 
     }
 
+    /**
+     * 登出操作处理
+     * @param code
+     */
     @Override
     public void LogOut(int code) {
 
         if(code == 0){
+            //通知主界面关闭
             EventMsg eventMsg = new EventMsg();
             eventMsg.setMsg("getOut");
             EventBus.getDefault().post(eventMsg);
@@ -248,6 +261,15 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
             startActivity(intent);
             finish();
         }
+
+    }
+
+    /**
+     * 返回按钮
+     */
+    public void back(View view){
+
+        finish();
 
     }
 

@@ -388,6 +388,12 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         return
     }*/
 
+    public void back(View view){
+
+        finish();
+
+    }
+
     /**
      * save的Observable
      * @param obj
