@@ -295,6 +295,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 sendChannelMsg("sugar");
 
                 StarFloating(v);
+                if(isBroadcaster(isAudience)){
+                    gifts++;
+                }
 
             }
         });
@@ -306,6 +309,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
                 sendChannelMsg("cool~");
                 likeFloating(v);
+                if(isBroadcaster(isAudience)){
+                    likes++;
+                }
 
             }
         });
@@ -317,7 +323,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
 
                 sendChannelMsg("paper_air_plane");
                 PlaneFloating(v);
-
+                if(isBroadcaster(isAudience)){
+                    gifts++;
+                }
             }
         });
 
@@ -358,6 +366,13 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
      */
     private void notifyMessageChanged(Message msg){
         mMsgList.add(msg);
+
+
+//        if(msgStr.contains("下小精灵")){
+//
+//            startEmoji();
+//
+//        }
 
         int MAX_MESSAGE_COUNT = 16;
 
@@ -408,7 +423,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                         return false;
                     }
                     sendChannelMsg(msgStr);
-
+                    if(msgStr.equals("下小精灵")){
+                        startEmoji();
+                    }
                     v.setText("");
 
                     Message msg = new Message(Message.MSG_TYPE_TEXT,

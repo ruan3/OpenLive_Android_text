@@ -2,6 +2,9 @@ package io.agora.openlive;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+
 import cn.bmob.v3.Bmob;
 import io.agora.openlive.model.WorkerThread;
 
@@ -19,6 +22,8 @@ public class AGApplication extends Application {
         super.onCreate();
         //第二：默认初始化
         Bmob.initialize(getApplicationContext(), APPID, "demo");
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this).setDownsampleEnabled(true).build();
+        Fresco.initialize(this, config);
     }
 
     public synchronized void initWorkerThread() {
