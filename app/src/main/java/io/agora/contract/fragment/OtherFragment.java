@@ -1,5 +1,6 @@
 package io.agora.contract.fragment;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -8,10 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.android.volley.RequestQueue;
 import com.google.gson.Gson;
 
 import java.util.List;
 
+import io.agora.contract.activity.SearchActivity;
 import io.agora.contract.adapter.OtherFragmentAdapter;
 import io.agora.contract.utils.CacheUtils;
 import io.agora.contract.utils.Constants;
@@ -36,6 +39,7 @@ public class OtherFragment extends BaseFragment implements IOtherFragment,SwipeR
     IOtherFragmentPresenter iOtherFragmentPresenter;
     OtherFragmentAdapter otherFragmentAdapter;
 
+    RequestQueue mQueue;
     boolean isFirst = true;
 
     @Override
@@ -73,6 +77,20 @@ public class OtherFragment extends BaseFragment implements IOtherFragment,SwipeR
         other_recyclerView.setLayoutManager(manager);
 //        other_recyclerView.setHasFixedSize(true);
         other_recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        /**
+         * 浮点监听
+         */
+        other_floatBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+//                Intent intent = new Intent(context, SearchActivity.class);
+//                startActivity(intent);
+                other_recyclerView.smoothScrollToPosition(0);
+
+            }
+        });
 
     }
 

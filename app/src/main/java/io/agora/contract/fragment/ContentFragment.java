@@ -193,7 +193,10 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
             tv_noData_tips.setText("获取数据失败，点击屏幕重试！");
 //            Snackbar.make(mRecyclerView,"获取列表数据失败---->"+errorMsg,Snackbar.LENGTH_LONG).show();
             Toast.makeText(context,"获取列表数据失败---->"+errorMsg,Toast.LENGTH_LONG).show();
-            mAdapter.notifyDataSetChanged();
+            if(mAdapter != null){
+
+                mAdapter.notifyDataSetChanged();
+            }
         }
 
     }
