@@ -6,6 +6,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="background">#F6F6F6</color>
+    <color name="windowBackground">@android:color/white</color>
 
     <color name="lightColorAccent">#30FF4081</color>
 
@@ -18,6 +19,10 @@
     <color name="gray5">#d8d8d8</color>
     <color name="blues">#4c6791</color>
     <color name="black">#2A2A2A</color>
+
+    <!--环信UI-->
+    <color name="gray_normal">#666667</color>
+    <color name="new_leave_text_color">#4c4c4c</color>
 
     <!--搜索框背景色-->
     <color name="search_bg">#e6e6e6</color>

@@ -17,6 +17,10 @@
 
     <string name="msg_say_something">吐吐槽</string>
 
+    <string name="transition_news_img">transition_news_img</string>
+
+    <string name="chat_primary_text_hint">Please input message.</string>
+
     <string-array
         name="string_array_resolutions">
         <item>160x120</item> // 120P

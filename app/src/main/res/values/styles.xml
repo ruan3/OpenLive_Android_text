@@ -1,10 +1,14 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--colorPrimaryDark对应状态栏的颜色-->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--colorPrimary对应ActionBar的颜色-->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/windowBackground</item>
+        <!--colorAccent 对应EditText编辑时、RadioButton选中、CheckBox等选中时的颜色-->
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
@@ -33,6 +37,12 @@
     <item name="android:background">@null</item>
     <item name="android:backgroundDimEnabled">false</item>
     <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <!-- 用于开启滑动返回功能的 Activity -->
+    <style name="AppTheme.Transparent">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
 </resources>
