@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
@@ -21,10 +22,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.bmob.v3.Bmob;
 import io.agora.common.Constant;
 import io.agora.openlive.AGApplication;
 import io.agora.openlive.BuildConfig;
+import io.agora.openlive.R;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.model.EngineConfig;
 import io.agora.openlive.model.MyEngineEventHandler;
@@ -35,16 +38,18 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements BGASwipeBackHelper.Delegate{
     private final static Logger log = LoggerFactory.getLogger(BaseActivity.class);
     /**
      * SDK初始化也可以放到Application中
      */
     public static String APPID = "e0e5821ab961e7607a39f5926cae7a51";
+    protected BGASwipeBackHelper mSwipeBackHelper;//滑动关闭app帮助类
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        initSwipeBackFinish();
         super.onCreate(savedInstanceState);
 
 //        Bmob.initialize(this, APPID);
@@ -255,4 +260,92 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onStop();
         Log.e("Com","BaseActivity--Onstop()");
     }
+
+    /**
+     * 初始化滑动返回。在 super.onCreate(savedInstanceState) 之前调用该方法
+     */
+    private void initSwipeBackFinish() {
+        mSwipeBackHelper = new BGASwipeBackHelper(this, this);
+
+        // 「必须在 Application 的 onCreate 方法中执行 BGASwipeBackManager.getInstance().init(this) 来初始化滑动返回」
+        // 下面几项可以不配置，这里只是为了讲述接口用法。
+
+        // 设置滑动返回是否可用。默认值为 true
+        mSwipeBackHelper.setSwipeBackEnable(true);
+        // 设置是否仅仅跟踪左侧边缘的滑动返回。默认值为 true
+        mSwipeBackHelper.setIsOnlyTrackingLeftEdge(true);
+        // 设置是否是微信滑动返回样式。默认值为 true
+        mSwipeBackHelper.setIsWeChatStyle(true);
+        // 设置阴影资源 id。默认值为 R.drawable.bga_sbl_shadow
+        mSwipeBackHelper.setShadowResId(R.drawable.bga_sbl_shadow);
+        // 设置是否显示滑动返回的阴影效果。默认值为 true
+        mSwipeBackHelper.setIsNeedShowShadow(true);
+        // 设置阴影区域的透明度是否根据滑动的距离渐变。默认值为 true
+        mSwipeBackHelper.setIsShadowAlphaGradient(true);
+        // 设置触发释放后自动滑动返回的阈值，默认值为 0.3f
+        mSwipeBackHelper.setSwipeBackThreshold(0.3f);
+    }
+
+    /**
+     * 滑动关闭activity的方法
+     *  是否支持滑动返回。这里在父类中默认返回 true 来支持滑动返回，如果某个界面不想支持滑动返回则重写该方法返回 false 即可
+     * @return
+     */
+    @Override
+    public boolean isSupportSwipeBack() {
+        return true;
+    }
+
+    /**
+     * 滑动关闭activity的方法
+     * 正在滑动返回
+     * @param slideOffset 从 0 到 1
+     */
+    @Override
+    public void onSwipeBackLayoutSlide(float slideOffset) {
+
+    }
+
+    /**
+     * 滑动关闭activity的方法
+     *  没达到滑动返回的阈值，取消滑动返回动作，回到默认状态
+     */
+    @Override
+    public void onSwipeBackLayoutCancel() {
+
+    }
+
+    /**
+     * 滑动关闭activity的方法
+     * 滑动返回执行完毕，销毁当前 Activity
+     */
+    @Override
+    public void onSwipeBackLayoutExecuted() {
+        mSwipeBackHelper.swipeBackward();
+    }
+
+    @Override
+    public void onBackPressed() {
+        // 正在滑动返回的时候取消返回按钮事件
+        if (mSwipeBackHelper.isSliding()) {
+            return;
+        }
+        mSwipeBackHelper.backward();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 处理业务逻辑，状态恢复等操作
+     *
+     * @param savedInstanceState
+     */
+    public void processLogic(Bundle savedInstanceState){}
 }

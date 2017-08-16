@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 import android.widget.TextView;
@@ -107,7 +108,7 @@ public class HomeActivity extends BaseActivity {
         });
         tabLayout.setTabOneText("直播");
         tabLayout.setTabOneIcon(R.drawable.icon_video);
-        tabLayout.setTabTwoText("其他");
+        tabLayout.setTabTwoText("看看");
         tabLayout.setTabTwoIcon(R.drawable.other);
         tabLayout.setTabThreeText("我");
         tabLayout.setTabThreeIcon(R.drawable.mine);
@@ -125,10 +126,37 @@ public class HomeActivity extends BaseActivity {
 
     }
 
+    private long exitTime = 0;
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+            if((System.currentTimeMillis()-exitTime) > 2000){
+                Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
 
+    }
 
+    /**
+     * 主界面不需要支持滑动返回，重写该方法永久禁用当前界面的滑动返回功能
+     *
+     * @return
+     */
+    @Override
+    public boolean isSupportSwipeBack() {
+        return false;
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
 }

@@ -36,6 +36,9 @@ import com.ufreedom.floatingview.effect.TranslateFloatingTransition;
 import com.ufreedom.floatingview.spring.ReboundListener;
 import com.ufreedom.floatingview.spring.SpringHelper;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,19 +55,24 @@ import cn.bmob.v3.listener.UpdateListener;
 import io.agora.common.Constant;
 import io.agora.contract.animation.PlaneFloating;
 import io.agora.contract.animation.StarFloating;
+import io.agora.contract.utils.LogUtils;
+import io.agora.model.EventMsg;
 import io.agora.model.LiveVideos;
+import io.agora.model.MyUser;
 import io.agora.openlive.R;
 import io.agora.openlive.model.AGEventHandler;
 import io.agora.openlive.model.ConstantApp;
 import io.agora.openlive.model.Message;
 import io.agora.openlive.model.User;
 import io.agora.openlive.model.VideoStatusData;
+import io.agora.presenter.IContentFragmentPresenter;
+import io.agora.presenter.IContentFragmentPresenterImpl;
 import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.utils.UIUtils;
 
-public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
+public class LiveRoomActivity extends BaseActivity implements AGEventHandler , ILiveRoomActivty{
 
     private final static Logger log = LoggerFactory.getLogger(LiveRoomActivity.class);
 
@@ -106,11 +114,25 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
     private int gifts = 0;
 
     /**
+     * 更新给用户看的，不更新到后台
+     */
+    private int audience_like = 0;
+
+    /**
+     * 更新给用户看的，不更新到后台
+     */
+    private int audience_gift = 0;
+
+    /**
      * 仿微信下动物雨
      * @param savedInstanceState
      */
     EmojiRainLayout emojiContainer;
 
+    IContentFragmentPresenter iContentFragmentPresenter;
+    TextView tv_online_pre;//显示在线人数
+    TextView tv_like;//显示点赞数
+    TextView tv_gift;//显示礼物数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +179,8 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         }
 
         String roomName = i.getStringExtra(ConstantApp.ACTION_KEY_ROOM_NAME);
+        String broadcasterName = i.getStringExtra(ConstantApp.ACTION_KEY_BROCAST_NAME);
+        Integer onlineNumber = i.getIntExtra(ConstantApp.ACTION_KEY_ONLINE_NUMBER,0);
 
         anchorID = roomName;
 
@@ -240,7 +264,26 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         worker().joinChannel(roomName, config().mUid);
 
         TextView textRoomName = (TextView) findViewById(R.id.room_name);
-        textRoomName.setText(roomName);
+        if(TextUtils.isEmpty(broadcasterName)){
+            textRoomName.setText("主播："+BmobUser.getCurrentUser(MyUser.class).getUser_id_name());
+        }else{
+
+            textRoomName.setText("主播："+broadcasterName);
+        }
+
+        tv_online_pre = (TextView) findViewById(R.id.tv_online_pre);
+        if(onlineNumber==null){
+            //如果是主播直接开房间的，在线人数为0
+            LogUtils.e("直播页面获取到的onlineNumber为空---->"+onlineNumber);
+            tv_online_pre.setText("在线人数："+0+"人");
+        }else{
+            LogUtils.e("直播页面获取到的onlineNumber---->"+onlineNumber);
+            tv_online_pre.setText("在线人数："+onlineNumber+"人");
+        }
+
+        tv_like = (TextView) findViewById(R.id.tv_like);
+        tv_gift = (TextView) findViewById(R.id.tv_gift);
+
 
         initMessageUI();
         InitCommentUI();
@@ -248,6 +291,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         //下动物雨的容器
         emojiContainer = (EmojiRainLayout) findViewById(R.id.fl_emoji_container);
         initEmojiContainer();
+
+        iContentFragmentPresenter = new IContentFragmentPresenterImpl(null);
+        iContentFragmentPresenter.RealTimeCallBack(this);
     }
 
     /**
@@ -297,7 +343,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 StarFloating(v);
                 if(isBroadcaster(isAudience)){
                     gifts++;
+                    giftSetText(gifts);
+                }else{
+                    audience_gift++;
+                    giftSetText(audience_gift);
                 }
+
 
             }
         });
@@ -311,6 +362,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 likeFloating(v);
                 if(isBroadcaster(isAudience)){
                     likes++;
+                    likeSetText(likes);
+                }else{
+                    audience_like++;
+                    likeSetText(audience_like);
                 }
 
             }
@@ -325,6 +380,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 PlaneFloating(v);
                 if(isBroadcaster(isAudience)){
                     gifts++;
+                    giftSetText(gifts);
+                }else{
+                    audience_gift++;
+                    giftSetText(audience_gift);
                 }
             }
         });
@@ -464,6 +523,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
             e.printStackTrace();
             encodeMsg = msgStr.getBytes();
         }
+        LogUtils.e("直播界面发消息之前是否有mDataStreamId---->"+mDataStreamId+"是否有encodeMsg------>"+encodeMsg);
         rtcEngine.sendStreamMessage(mDataStreamId,encodeMsg);
         Log.e("Com","------sendChannelMsg----");
     }
@@ -508,16 +568,28 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 Log.e("Com","content----->"+new String(content));
                 String contentStr = new String(content);
                 if(contentStr.equals("cool~")){
+                    //点赞动画
                     likeFloating(iv_like);
                     likes++;
+                    audience_like++;
+                    likeSetText(audience_like);
                 }else if(contentStr.equals("sugar")) {
+                    //糖果动画
                     StarFloating(iv_star);
                     gifts++;
+                    audience_gift++;
+                    giftSetText(audience_gift);
                 }else if(contentStr.equals("paper_air_plane")) {
+                    //飞机动画
                     PlaneFloating(iv_paper_airplane);
                     gifts++;
+                    audience_gift++;
+                    giftSetText(audience_gift);
                 }else if(contentStr.equals("下小精灵")){
+                    //下小精灵动画
                     gifts++;
+                    audience_gift++;
+                    giftSetText(audience_gift);
                     startEmoji();
                     notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
                 } else {
@@ -557,9 +629,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
             @Override
             public void onClick(View v) {
                 Object tag = v.getTag();
+                LogUtils.e("切换主播的按钮被按下----->"+tag);
                 if (tag != null && (boolean) tag) {
+                    //不切换主播
                     doSwitchToBroadcaster(false);
                 } else {
+                    //切换主播
                     doSwitchToBroadcaster(true);
                 }
             }
@@ -783,13 +858,19 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 }
             }, 1000); // wait for reconfig engine
         } else {
+            //切换主播，停止互动
             stopInteraction(currentHostCount, uid);
         }
     }
 
+    /**
+     * 停止互动
+     * @param currentHostCount
+     * @param uid
+     */
     private void stopInteraction(final int currentHostCount, final int uid) {
         doConfigEngine(Constants.CLIENT_ROLE_AUDIENCE);
-
+        LogUtils.e("======停止互动======");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -805,6 +886,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         }, 1000); // wait for reconfig engine
     }
 
+    /**
+     * 渲染远程的ui
+     * @param uid
+     */
     private void doRenderRemoteUi(final int uid) {
         runOnUiThread(new Runnable() {
             @Override
@@ -818,8 +903,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 surfaceV.setZOrderMediaOverlay(true);
                 mUidsList.put(uid, surfaceV);
                 if (config().mUid == uid) {
+                    //设置本地视频
                     rtcEngine().setupLocalVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, uid));
                 } else {
+                    //设置远程主播视频
                     rtcEngine().setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, uid));
                 }
 
@@ -868,7 +955,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         log.debug("onUserOffline " + (uid & 0xFFFFFFFFL) + " " + reason);
         Log.e("Com","测试主播是否下线的东西---"+reason);
         //这个是监听，主播离线的操作
-        doRemoveRemoteUi(uid);
+        if(reason!=1){
+
+            doRemoveRemoteUi(uid);
+        }
     }
 
     private void requestRemoteStreamType(final int currentHostCount) {
@@ -898,6 +988,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
         }, 500);
     }
 
+    /**
+     * 移除远程UI
+     * @param uid
+     */
     private void doRemoveRemoteUi(final int uid) {
         runOnUiThread(new Runnable() {
             @Override
@@ -1054,5 +1148,57 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler {
                 .build();
         mFloating.startFloating(floatingElement);
 
+    }
+
+    /**
+     * EventBus的事件
+     * @param eventMsg
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EventMsg eventMsg){
+
+        Log.e("Com","EventBus主页面接受到消息----->"+eventMsg.getMsg());
+        if(eventMsg!=null){
+
+            if("getOut".equals(eventMsg.getMsg())){
+                finish();
+            }
+        }
+
+    }
+
+    @Override
+    public void getOnlineNumber(Integer online) {
+
+        if(online!=null){
+
+            tv_online_pre.setText("在线人数："+online+"人");
+        }
+
+    }
+
+    @Override
+    public void RealTimeCallBack(int code, List<LiveVideos> videos) {
+
+        iContentFragmentPresenter.getOnlinePerson(anchorID,this);
+
+    }
+
+    /**
+     * 获取到的点赞数，更新到textView上
+     * @param like
+     */
+    public void likeSetText(int like){
+
+        tv_like.setText("集赞数："+like);
+
+    }
+
+    /**
+     * 获取到的礼物数，更新到textView上
+     * @param gift
+     */
+    public void giftSetText(int gift){
+        tv_gift.setText("礼物数："+gift);
     }
 }
