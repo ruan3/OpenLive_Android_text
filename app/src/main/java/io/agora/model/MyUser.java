@@ -20,6 +20,16 @@ public class MyUser extends BmobUser {
     private Integer num;
     private Boolean sex;
 
+    public String getAuthIconUrl() {
+        return authIconUrl;
+    }
+
+    public void setAuthIconUrl(String authIconUrl) {
+        this.authIconUrl = authIconUrl;
+    }
+
+    private String authIconUrl;
+
     public BmobFile getHead_icon() {
         return head_icon;
     }
