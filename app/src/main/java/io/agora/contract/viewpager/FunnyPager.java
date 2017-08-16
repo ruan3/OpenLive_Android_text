@@ -37,7 +37,6 @@ public class FunnyPager extends BasePager implements IOtherFragment,SwipeRefresh
     FloatingActionButton other_floatBtn;
     IOtherFragmentPresenter iOtherFragmentPresenter;
     OtherFragmentAdapter otherFragmentAdapter;
-    RequestQueue mQueue;
     boolean isFirst = true;
 
 
