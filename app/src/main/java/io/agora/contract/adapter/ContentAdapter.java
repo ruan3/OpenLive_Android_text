@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.File;
 import java.util.List;
@@ -26,6 +28,8 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.DownloadFileListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
+import io.agora.common.Constant;
+import io.agora.contract.utils.LogUtils;
 import io.agora.contract.view.CircleImageView;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
@@ -48,6 +52,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     private final LayoutInflater mLayoutInflater;
     Context context;
     List<LiveVideos> videos;
+    String broadcastName ;
 
     public ContentAdapter(Context context, List<LiveVideos> videos){
 
@@ -67,6 +72,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         ((contentHodler) holder).tv_title.setText(videos.get(position).getLiveTitle());
+
         if(videos.get(position).getAnchorName()!=null){
             Log.e("Com","获取到的用户名----->"+videos.get(position).getAnchorName().getObjectId());
             //注意：在这里获取到的只有objectid,只能再通过objectid去查询具体信息
@@ -79,8 +85,20 @@ public class ContentAdapter extends RecyclerView.Adapter {
                         String userName = list.get(0).getUser_id_name();
                         Log.e("Com","获取到的用户名通过----->"+userName);
                         ((contentHodler) holder).source.setText(userName);
+                        broadcastName = userName;
                         BmobFile user_icon = list.get(0).getHead_icon();
-                        Glide.with(context).load(user_icon.getUrl()).into( ((contentHodler)holder).cv_user_icon);
+                        if(user_icon!=null){
+                            //走正常注册登录流程，获取下来的直播数据
+                            Glide.with(context).load(user_icon.getUrl()).diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .placeholder(R.drawable.video_default_icon)
+                                    .error(R.drawable.video_default_icon).into( ((contentHodler)holder).cv_user_icon);
+                        }else if(!TextUtils.isEmpty(list.get(0).getAuthIconUrl())){
+                            //走第三方登录的流程
+                            LogUtils.e("走第三方流程获取头像----->"+list.get(0).getAuthIconUrl());
+                            Glide.with(context).load(list.get(0).getAuthIconUrl()).diskCacheStrategy(DiskCacheStrategy.ALL)
+//                                    .placeholder(R.drawable.video_default_icon)
+                                    .error(R.drawable.video_default_icon).into( ((contentHodler)holder).cv_user_icon);
+                        }
 
                     }else{
                         Log.e("Com","获取到的用户名报错----->"+e.toString());
@@ -88,6 +106,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                 }
             });
             ((contentHodler) holder).source.setText(videos.get(position).getAnchorName().getUsername());
+            LogUtils.e("傻嘿主播名---->"+videos.get(position).getAnchorName().getUsername());
         }
         //先要获取到文件，然后根据文件的具体信息再去下载图片，这里最好用一下框架
         BmobFile file = videos.get(position).getImageUrl();
@@ -111,6 +130,10 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     Intent i = new Intent(context, LiveRoomActivity.class);
                     i.putExtra(ConstantApp.ACTION_KEY_CROLE, Constants.CLIENT_ROLE_AUDIENCE);
                     i.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME, videos.get(position).getAnchorName().getObjectId());
+                    i.putExtra(ConstantApp.ACTION_KEY_ONLINE_NUMBER,videos.get(position).getAudience());
+                    LogUtils.e("主播名字--->"+broadcastName);
+                    LogUtils.e("在线人数---->"+videos.get(position).getAudience());
+                    i.putExtra(ConstantApp.ACTION_KEY_BROCAST_NAME,broadcastName);
                     context.startActivity(i);
                 }
             });

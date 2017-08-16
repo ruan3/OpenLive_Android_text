@@ -23,6 +23,7 @@ import io.agora.contract.utils.Utils;
 import io.agora.contract.view.CircleImageView;
 import io.agora.contract.view.MyJCVideoPlayerStandard;
 import io.agora.model.NetAudioPagerData;
+import io.agora.onekeyshare.OnekeyShare;
 import io.agora.openlive.R;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -176,6 +177,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_transmit;
         TextView tv_comment;
         TextView tv_like;
+        LinearLayout ll_ding;
 
         public GIFViewHolder(View itemView) {
             super(itemView);
@@ -190,9 +192,11 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
 
+            ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
+
         }
 
-        public void setData(NetAudioPagerData.ListEntity mediaItem){
+        public void setData(final NetAudioPagerData.ListEntity mediaItem){
 
 
             Glide.with(mContext).load(mediaItem.getGif().getImages().get(0)).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(iv_image_gif);
@@ -222,6 +226,13 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_like.setText(mediaItem.getUp());
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
+
+            ll_ding.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                        showShare(mediaItem);
+                }
+            });
         }
     }
 
@@ -243,6 +254,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_transmit;
         TextView tv_comment;
         TextView tv_like;
+        LinearLayout ll_ding;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
@@ -258,11 +270,11 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_transmit = (TextView) itemView.findViewById(R.id.tv_transmit);
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
-
+            ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
 
         }
 
-        public void setData(NetAudioPagerData.ListEntity mediaItem){
+        public void setData(final NetAudioPagerData.ListEntity mediaItem){
 
             //第一个参数是视频播放地址，第二个参数是显示封面的地址，第三参数是标题
             jcv_videoplayer.setUp(mediaItem.getVideo().getVideo().get(0), JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "小鸡鸡");
@@ -296,6 +308,14 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
 
+            ll_ding.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showShare(mediaItem);
+                }
+            });
+
+
         }
     }
 
@@ -313,6 +333,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_transmit;
         TextView tv_comment;
         TextView tv_like;
+        LinearLayout ll_ding;
 
         public TextViewHolder(View itemView) {
             super(itemView);
@@ -325,10 +346,11 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_transmit = (TextView) itemView.findViewById(R.id.tv_transmit);
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
+            ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
 
         }
 
-        public void setData(NetAudioPagerData.ListEntity mediaItem){
+        public void setData(final NetAudioPagerData.ListEntity mediaItem){
 
             //设置文本
             tv_content.setText(mediaItem.getText());
@@ -357,6 +379,13 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_like.setText(mediaItem.getUp());
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
+            ll_ding.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showShare(mediaItem);
+                }
+            });
+
 
         }
     }
@@ -376,6 +405,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_transmit;
         TextView tv_comment;
         TextView tv_like;
+        LinearLayout ll_ding;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -389,9 +419,10 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_transmit = (TextView) itemView.findViewById(R.id.tv_transmit);
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
+            ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
         }
 
-        public void setData(NetAudioPagerData.ListEntity mediaItem){
+        public void setData(final NetAudioPagerData.ListEntity mediaItem){
 
 
 //            iv_image_icon.setImageResource(R.drawable.bg_item);
@@ -432,6 +463,12 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
 
+            ll_ding.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showShare(mediaItem);
+                }
+            });
         }
     }
 
@@ -500,6 +537,47 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         wm.getDefaultDisplay().getMetrics(outMetrics);
         int Srceenwidth = outMetrics.widthPixels;
         return Srceenwidth;
+    }
+
+
+    private void showShare(NetAudioPagerData.ListEntity mediaItem) {
+        OnekeyShare oks = new OnekeyShare();
+//关闭sso授权
+        oks.disableSSOWhenAuthorize();
+
+// title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间等使用
+        oks.setTitle(mediaItem.getText());
+// titleUrl是标题的网络链接，QQ和QQ空间等使用
+        oks.setTitleUrl(mediaItem.getShare_url());
+// text是分享文本，所有平台都需要这个字段
+        oks.setText(mediaItem.getText()+mediaItem.getShare_url());
+// imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
+//oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
+// url仅在微信（包括好友和朋友圈）中使用
+        oks.setUrl(mediaItem.getShare_url());
+        LogUtils.e("获取到分享的地址----->"+mediaItem.getShare_url());
+// comment是我对这条分享的评论，仅在人人网和QQ空间使用
+        oks.setComment(mediaItem.getComment());
+        LogUtils.e("获取到分享的地址----->"+mediaItem.getComment());
+// site是分享此内容的网站名称，仅在QQ空间使用
+//        oks.setSite(getString(R.string.app_name));
+// siteUrl是分享此内容的网站地址，仅在QQ空间使用
+        oks.setSiteUrl(mediaItem.getShare_url());
+        if(mediaItem.getImage()!=null){
+            LogUtils.e("获取到图片分享的地址----->"+mediaItem.getImage().getBig().get(0));
+            oks.setImageUrl(mediaItem.getImage().getBig().get(0));
+        }
+
+        if(mediaItem.getVideo()!=null){
+            LogUtils.e("获取到视频分享的地址----->"+mediaItem.getVideo().getVideo().get(0));
+            oks.setVideoUrl(mediaItem.getVideo().getVideo().get(0));
+        }
+
+        oks.setAddress(mediaItem.getShare_url());
+
+
+// 启动分享GUI
+        oks.show(mContext);
     }
 
 }
