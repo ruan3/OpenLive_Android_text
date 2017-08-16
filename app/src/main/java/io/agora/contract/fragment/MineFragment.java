@@ -2,18 +2,28 @@ package io.agora.contract.fragment;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformDb;
 import io.agora.contract.activity.MineSettingActivity;
+import io.agora.contract.activity.ServiceCenterActivity;
 import io.agora.contract.utils.LogUtils;
 import io.agora.contract.view.CircleImageView;
+import io.agora.model.EventMsg;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
@@ -38,16 +48,17 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
     TextView tv_like;
     TextView tv_live;
     TextView tv_gift;
+    LinearLayout ll_service;
+
     private boolean isFirst = true;
 
     int like;
     int live;
     int gift;
 
-    IContentFragmentPresenter iContentFragmentPresenter;
-
     @Override
     public View initView() {
+//        EventBus.getDefault().register(this);
         View view = View.inflate(context, R.layout.fragment_mine,null);
         setting = (RadioButton) view.findViewById(R.id.setting);
         avatar = (CircleImageView) view.findViewById(R.id.avatar);
@@ -55,6 +66,7 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         tv_like = (TextView) view.findViewById(R.id.tv_like);
         tv_gift = (TextView) view.findViewById(R.id.tv_gift);
         tv_live = (TextView) view.findViewById(R.id.tv_live);
+        ll_service = (LinearLayout) view.findViewById(R.id.ll_service);
         return view;
     }
 
@@ -66,7 +78,7 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         tv_live.setText("直播："+live);
         tv_gift.setText("礼物："+gift);
 
-        if(isFirst){
+        if(isFirst&&BmobUser.getCurrentUser()!=null){
             iMineFragmentPresenter = new IMineFragmentPresentImpl(this);
             iMineFragmentPresenter.getData();
             iMineFragmentPresenter.RealTimeCallBack();
@@ -83,14 +95,28 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         });
 
         MyUser user = BmobUser.getCurrentUser(MyUser.class);
-        if(user.getHead_icon()!=null){
+        if(user!=null){
 
-            Glide.with(context).load(user.getHead_icon().getUrl()).into(avatar);
-        }
-        if(!TextUtils.isEmpty(user.getUser_id_name())){
-            tv_user_name.setText(user.getUser_id_name().toString());
-        }
+            if(user.getHead_icon()!=null){
 
+                Glide.with(context).load(user.getHead_icon().getUrl()).into(avatar);
+            }else{
+                Glide.with(context).load(user.getAuthIconUrl()).into(avatar);
+            }
+            if(!TextUtils.isEmpty(user.getUser_id_name())){
+                tv_user_name.setText(user.getUser_id_name().toString());
+            }
+        }
+        //客服中心按钮
+        ll_service.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(context, ServiceCenterActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
     }
 
@@ -127,6 +153,12 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         }
 
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        EventBus.getDefault().unregister(this);
     }
 
 }

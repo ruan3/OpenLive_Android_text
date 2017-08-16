@@ -194,10 +194,20 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
 //            Snackbar.make(mRecyclerView,"获取列表数据失败---->"+errorMsg,Snackbar.LENGTH_LONG).show();
             Toast.makeText(context,"获取列表数据失败---->"+errorMsg,Toast.LENGTH_LONG).show();
             if(mAdapter != null){
-
+                videos.clear();
                 mAdapter.notifyDataSetChanged();
             }
         }
+
+    }
+
+    private boolean misVisibleToUser = true;
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+
+//        misVisibleToUser = isVisibleToUser;
+        LogUtils.e("ContentFragment--->isVisibleToUser"+isVisibleToUser);
 
     }
 
@@ -209,6 +219,17 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
     @Override
     public void RealTimeCallBack(int code, List<LiveVideos> videos) {
             //监听到数据更新后重新加载
+        LogUtils.e("contentFragment是否在当前页面---->"+misVisibleToUser);
+        if(misVisibleToUser){
+            //当用户在当前页面才去加载数据更新数据
             iContentFragmentPresenter.getData();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        LogUtils.e("contentFragment是否在当前页面hidden---->"+hidden);
+        misVisibleToUser = hidden;
     }
 }

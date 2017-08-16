@@ -21,6 +21,7 @@ import io.agora.contract.viewpager.BasePager;
 import io.agora.contract.viewpager.ContentPager;
 import io.agora.contract.viewpager.FunnyPager;
 import io.agora.contract.viewpager.MoivePager;
+import io.agora.contract.viewpager.NewsPager;
 import io.agora.openlive.R;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
@@ -70,11 +71,11 @@ public class NewsFragment extends BaseFragment {
 
             pagers = new ArrayList<BasePager>();
 
-            pagers.add(new ContentPager(context,"热点"));
-            pagers.add(new ContentPager(context,"体育"));
+            pagers.add(new NewsPager(context,0));
+            pagers.add(new NewsPager(context,1));
             pagers.add(new FunnyPager(context));
             pagers.add(new MoivePager(context));
-            pagers.add(new ContentPager(context,"金融"));
+//            pagers.add(new ContentPager(context,"金融"));
 
             isFrist = false;
         }
@@ -84,7 +85,7 @@ public class NewsFragment extends BaseFragment {
 
     @Override
     public String setTitile() {
-        return "新闻";
+        return "看看";
     }
 
     private IndicatorPagerAdapter adapter = new IndicatorViewPager.IndicatorViewPagerAdapter() {
@@ -120,7 +121,7 @@ public class NewsFragment extends BaseFragment {
 
         @Override
         public int getCount() {
-            return 5;
+            return 4;
         }
     };
 }

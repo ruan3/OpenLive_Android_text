@@ -12,6 +12,11 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import cn.sharesdk.framework.PlatformDb;
 import io.agora.contract.LoginActivity;
 import io.agora.openlive.R;
 import io.agora.openlive.ui.HomeActivity;
@@ -109,5 +114,6 @@ public abstract  class BaseFragment extends Fragment {
         Log.e("Com","BaseFragment------>Ondestory()");
         isInitComplete = false;
     }
+
 
 }
