@@ -1,17 +1,26 @@
 package io.agora.presenter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
 import io.agora.contract.ILoginView;
+import io.agora.contract.utils.DialogUtils;
+import io.agora.contract.utils.LogUtils;
 import io.agora.model.MyUser;
 import rx.Subscriber;
 import rx.subjects.Subject;
@@ -106,18 +115,61 @@ public class IloginRegisterPresenterImpl implements ILoginRegisterPresenter {
     }
 
     @Override
-    public void forgetPwd(final String number) {
+    public void forgetPwd(final String number,Context context) {
 
-        BmobUser.resetPasswordByEmail(number, new UpdateListener() {
+
+        DialogUtils.getInstance().showBindEmail(context, new DialogUtils.CallBackListener() {
             @Override
-            public void done(BmobException e) {
-                if(e==null){
-                    iLoginView.doResetPwd(0,"重置密码请求成功，请到" + number + "邮箱进行密码重置操作");
+            public void confirm(String result) {
+                if(result.contains("失败")){
+                    iLoginView.doResetPwd(-1,"重置密码失败："+result.toString());
                 }else{
-                    iLoginView.doResetPwd(-1,"重置密码失败："+e.toString());
+                    iLoginView.doResetPwd(0,"重置密码请求成功，请到" + result + "邮箱进行密码重置操作");
                 }
             }
+
+            @Override
+            public void cancle(String str) {
+
+            }
         });
+
+    }
+
+    @Override
+    public void sinaLogin(String platformName) {
+
+        Platform weibo = ShareSDK.getPlatform(platformName);
+        weibo.setPlatformActionListener(new PlatformActionListener() {
+            @Override
+            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+
+                platform.getDb().exportData();
+                LogUtils.e("獲取到的第三方登录的haspMap---->"+hashMap.toString());
+                LogUtils.e("獲取到的第三方登录完成---->"+ platform.getDb().exportData());
+                iLoginView.onComplete(platform,i,hashMap);
+            }
+
+            @Override
+            public void onError(Platform platform, int i, Throwable throwable) {
+                LogUtils.e("獲取到的第三方登录失败---->"+ platform.getDb().exportData());
+                iLoginView.onError(platform,i,throwable);
+            }
+
+            @Override
+            public void onCancel(Platform platform, int i) {
+
+                platform.getDb().exportData();
+                LogUtils.e("獲取到的第三方登录取消---->"+ platform.getDb().exportData());
+                iLoginView.onCancel(platform,i);
+            }
+        });
+
+        //authorize与showUser单独调用一个即可
+//        weibo.authorize();//单独授权,OnComplete返回的hashmap是空的
+        weibo.showUser(null);//授权并获取用户信息
+//移除授权
+//weibo.removeAccount(true);
 
     }
 }

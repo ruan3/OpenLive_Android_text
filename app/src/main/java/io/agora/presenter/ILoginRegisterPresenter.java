@@ -1,5 +1,7 @@
 package io.agora.presenter;
 
+import android.content.Context;
+
 /**
  * File Name:
  * Author:      ruan
@@ -11,5 +13,6 @@ public interface ILoginRegisterPresenter {
 
     public void doLogin(String uid,String pwd);
     public void doRegister(String uid,String pwd);
-    public void forgetPwd(String number);
+    public void forgetPwd(String number,Context context);
+    public void sinaLogin(String PlatformName);
 }

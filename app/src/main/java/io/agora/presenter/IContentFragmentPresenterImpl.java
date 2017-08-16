@@ -17,6 +17,7 @@ import io.agora.contract.fragment.IContentFragment;
 import io.agora.contract.utils.LogUtils;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
+import io.agora.openlive.ui.ILiveRoomActivty;
 
 /**
  * File Name:
@@ -97,6 +98,7 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
             public void onDataChange(JSONObject data) {
                 Log.e("Com","实时数据onDataChange：data = "+data);
                 IContentFragment.RealTimeCallBack(1,null);
+//                iLiveRoomActivty.RealTimeCallBack(1,null);
             }
 
             @Override
@@ -109,6 +111,64 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
             }
         });
 
+    }
+
+    /**
+     * 用于在直播页面，查询更新当前人数
+     * @param uid
+     */
+    @Override
+    public void getOnlinePerson(String uid, final ILiveRoomActivty iLiveRoomActivty) {
+
+        final BmobQuery<LiveVideos> liveVideos = new BmobQuery<>();
+        liveVideos.addWhereEqualTo("anchorName",uid);
+        liveVideos.findObjects(new FindListener<LiveVideos>() {
+            @Override
+            public void done(List<LiveVideos> list, BmobException e) {
+
+                if(list != null){
+                    //查询数据成功
+                    if(list.size()>0){
+                        LiveVideos videos = list.get(0);
+                        int online = videos.getAudience();
+                        iLiveRoomActivty.getOnlineNumber(online);
+                        LogUtils.e("查询数据成功");
+                    }else{
+//                        Log.e("Com","查詢列表返回沒有數據");
+                        LogUtils.e("查詢列表返回沒有數據");
+                        iLiveRoomActivty.getOnlineNumber(null);
+                    }
+                }else{
+                }
+
+            }
+        });
 
     }
+
+    @Override
+    public void RealTimeCallBack(final ILiveRoomActivty iLiveRoomActivty) {
+
+        final BmobRealTimeData rtd = new BmobRealTimeData();
+        rtd.start(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(JSONObject data) {
+                Log.e("Com","直播页实时数据onDataChange：data = "+data);
+                iLiveRoomActivty.RealTimeCallBack(1,null);
+            }
+
+            @Override
+            public void onConnectCompleted(Exception ex) {
+                Log.e("Com","直播页实时数据连接成功:"+rtd.isConnected());
+                if(rtd.isConnected()){
+                    // 监听表更新
+                    rtd.subTableUpdate("LiveVideos");
+                }
+            }
+        });
+
+    }
+
+
 }

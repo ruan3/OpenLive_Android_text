@@ -45,17 +45,29 @@ public class IOtherFragmentPresenterImpl implements IOtherFragmentPresenter {
 
         StringRequest request = new StringRequest(Request.Method.GET, Constants.ALL_RES_URL, new Response.Listener<String>() {
             @Override
-            public void onResponse(String s) {
-
+            public void onResponse(Request<String> request, String s) {
                 LogUtils.e("獲取到看看網絡數據："+s);
                 iOtherFragment.getDataResult(0,s);
             }
+
+//            @Override
+//            public void onResponse(String s) {
+//
+//                LogUtils.e("獲取到看看網絡數據："+s);
+//                iOtherFragment.getDataResult(0,s);
+//            }
         }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
+            public void onErrorResponse(Request request, VolleyError volleyError) {
                 LogUtils.e("获取看看网络数据失败----->"+volleyError.toString());
                 iOtherFragment.getDataResult(-1,volleyError.toString());
             }
+
+//            @Override
+//            public void onErrorResponse(VolleyError volleyError) {
+//                LogUtils.e("获取看看网络数据失败----->"+volleyError.toString());
+//                iOtherFragment.getDataResult(-1,volleyError.toString());
+//            }
         });
 
         mQueue.add(request);
