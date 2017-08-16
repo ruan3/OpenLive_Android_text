@@ -104,20 +104,33 @@ public class SearchActivity extends BaseActivity {
         progressBar.setVisibility(View.VISIBLE);
         StringRequest request = new StringRequest(Request.Method.GET,url, new Response.Listener<String>() {
             @Override
-            public void onResponse(String result) {
-
+            public void onResponse(Request<String> request, String result) {
                 LogUtils.e("获取到搜索网络数据---->"+result);
                 processData(result);
                 progressBar.setVisibility(View.GONE);
-
             }
+
+//            @Override
+//            public void onResponse(String result) {
+//
+//                LogUtils.e("获取到搜索网络数据---->"+result);
+//                processData(result);
+//                progressBar.setVisibility(View.GONE);
+//
+//            }
         }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-
+            public void onErrorResponse(Request request, VolleyError volleyError) {
                 LogUtils.e("获取网络数据异常----->"+volleyError.toString());
                 progressBar.setVisibility(View.GONE);
             }
+
+//            @Override
+//            public void onErrorResponse(VolleyError volleyError) {
+//
+//                LogUtils.e("获取网络数据异常----->"+volleyError.toString());
+//                progressBar.setVisibility(View.GONE);
+//            }
         });
 
         mQueue.add(request);

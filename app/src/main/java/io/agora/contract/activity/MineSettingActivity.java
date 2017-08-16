@@ -28,6 +28,7 @@ import java.io.File;
 
 import cn.bmob.v3.BmobUser;
 import io.agora.contract.LoginActivity;
+import io.agora.contract.utils.DialogUtils;
 import io.agora.contract.view.CircleImageView;
 import io.agora.model.EventMsg;
 import io.agora.model.MyUser;
@@ -83,6 +84,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
         fm = new FileChooserManager(this);
         iMineSettingPresenter = new IMineSettingPresenterImpl(fm,this);
 
+
         rl_set_headIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,9 +133,12 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
         });
 
         MyUser user = BmobUser.getCurrentUser(MyUser.class);
+
         if(user.getHead_icon()!=null){
 
             Glide.with(context).load(user.getHead_icon().getUrl()).into(iv_head_icon);
+        }else if(!TextUtils.isEmpty(user.getAuthIconUrl())){
+            Glide.with(context).load(user.getAuthIconUrl()).into(iv_head_icon);
         }
         if(!TextUtils.isEmpty(user.getUser_id_name())){
 
@@ -152,6 +157,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
                 iMineSettingPresenter.loginOut(context);
             }
         });
+
 
     }
 
