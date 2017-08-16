@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:background="@android:color/white"
     android:fitsSystemWindows="true"
@@ -27,37 +27,49 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
-            android:text="创建房间"
+            android:text="客服中心"
             android:textColor="@android:color/white"
             android:textSize="18sp"/>
     </android.support.v7.widget.Toolbar>
 
-    <ImageView
-        android:id="@+id/iv_iamge_add"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="144dp"
-        android:src="@drawable/image_add"
-        android:layout_gravity="center_horizontal"
-        />
 
-    <EditText
-        android:id="@+id/et_room_title"
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:hint="输入主题"
-        android:layout_gravity="center_horizontal"
-        />
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_margin="5dp"
+        >
 
-    <Button
-        android:id="@+id/btn_confrim"
-        android:layout_width="160dp"
+        <EditText
+            android:id="@+id/et_input"
+            android:layout_width="0dp"
+            android:layout_height="42dp"
+            android:layout_weight="1"
+            android:hint="输入想说的话"
+            android:textSize="@dimen/normal_text_size"
+            />
+
+        <Button
+            android:id="@+id/btn_send"
+            android:background="@drawable/ic_send"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/toolbar"
+        android:id="@+id/serivce_recyclerView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:layout_gravity="center_horizontal"
-        android:text="确认"
-        android:textColor="#ffffff"
+        android:layout_above="@id/ll_bottom"
+        android:layout_marginTop="5dp"
         />
 
-</LinearLayout>
+
+</RelativeLayout>

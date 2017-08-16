@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_margin="5dp"
+    android:gravity="center_vertical|right"
+    android:layout_height="match_parent">
+
+
+
+    <TextView
+        android:id="@+id/tv_mine_chat"
+        android:layout_width="wrap_content"
+        android:layout_marginRight="5dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/hd_chatto_bg_normal"
+        android:text="啦啦啦啦啦啦啦啦，我是买布的小行家"
+        android:layout_marginLeft="5dp"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        />
+    <io.agora.contract.view.CircleImageView
+        android:id="@+id/iv_mine_headICon"
+        android:layout_width="32dp"
+        android:layout_marginRight="5dp"
+        android:layout_height="32dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo" />
+
+
+</LinearLayout>

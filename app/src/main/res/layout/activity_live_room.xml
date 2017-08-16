@@ -51,7 +51,7 @@
         <io.agora.ui.AGLinearLayout
             android:id="@+id/top_area"
             android:layout_width="wrap_content"
-            android:layout_height="54dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
@@ -63,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:layout_marginStart="6dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/rounded_bg"
                 android:orientation="vertical"
                 android:paddingLeft="12dp"
@@ -74,6 +75,36 @@
                     android:id="@+id/room_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="主播：阮仔"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_online_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="在线人数：10人"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+
+                <TextView
+                android:id="@+id/tv_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="集赞数：10"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tv_gift"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="礼物数：10"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -113,6 +144,7 @@
                     android:layout_height="match_parent"
                     android:onClick="onShowHideClicked"
                     android:scaleType="center"
+                    android:visibility="gone"
                     android:src="@drawable/btn_hide" />
 
                 <ImageView

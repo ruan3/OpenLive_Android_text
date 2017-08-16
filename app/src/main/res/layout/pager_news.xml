@@ -5,7 +5,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,19 +12,19 @@
 
 
         <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/other_refreshLayout"
+            android:id="@+id/news_refreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/other_recyclerView"
+                android:id="@+id/news_recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/item_video" />
         </android.support.v4.widget.SwipeRefreshLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/other_floatBtn"
+            android:id="@+id/news_floatBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"

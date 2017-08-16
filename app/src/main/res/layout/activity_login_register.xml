@@ -156,22 +156,26 @@
         android:padding="10dp">
 
         <ImageView
+            android:id="@+id/iv_sina"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="10dp"
-            android:src="@drawable/fb" />
+            android:src="@drawable/ic_sina" />
 
 
         <ImageView
+            android:id="@+id/iv_qq"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="10dp"
-            android:src="@drawable/tw" />
+            android:src="@drawable/ic_qq" />
 
         <ImageView
+            android:id="@+id/iv_wechat"
             android:layout_width="50dp"
+            android:visibility="invisible"
             android:layout_height="50dp"
-            android:src="@drawable/ln" />
+            android:src="@drawable/ic_wechat" />
 
     </LinearLayout>
 

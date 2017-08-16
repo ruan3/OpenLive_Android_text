@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_margin="5dp"
+    android:gravity="center_vertical|left"
+    android:layout_height="match_parent">
+
+    <io.agora.contract.view.CircleImageView
+        android:id="@+id/iv_services"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icon_service" />
+
+    <TextView
+        android:id="@+id/tv_setvice_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/hd_chatfrom_bg_focused"
+        android:layout_toRightOf="@id/iv_services"
+        android:layout_alignBaseline="@id/iv_services"
+        android:text="啦啦啦啦啦啦啦啦，我是买布的小行家"
+        android:layout_marginRight="5dp"
+        android:padding="5dp"
+        android:layout_marginTop="5dp"
+        />
+
+</RelativeLayout>

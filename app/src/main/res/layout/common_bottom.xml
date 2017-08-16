@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -102,11 +103,13 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_marginRight="4dp"
-                android:src="@drawable/ic_like" />
+            <com.jaren.lib.view.LikeView
+                android:id="@+id/lv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cirRadius="8dp"
+                app:cycleTime="1000"
+                app:defaultColor="#ff657487" />
 
             <TextView
                 android:id="@+id/tv_like"

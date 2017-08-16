@@ -142,7 +142,7 @@
         />
 
     <LinearLayout
-        android:id="@+id/service"
+        android:id="@+id/ll_service"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="?attr/selectableItemBackground"
@@ -183,7 +183,7 @@
         />
 
     <LinearLayout
-        android:id="@+id/update"
+        android:id="@+id/ll_update"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:background="?attr/selectableItemBackground"
