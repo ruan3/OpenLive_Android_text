@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':mkloadlibrary', ':spacetablayout', ':FloatingViewLib', ':emojirain', ':jcvideoplayer-lib', ':frescoUtil', ':vitamio', ':ViewPagerIndicatorlibrary', ':likeViewlib', ':BGASwipeBacklibrary'
 include ':libvideoprp'

@@ -39,6 +39,7 @@ android {
     sourceSets {
         main {
             jniLibs.srcDirs = ['../../../libs']
+
         }
     }
 }
@@ -56,4 +57,47 @@ dependencies {
         exclude group: 'com.google.android', module: 'android'
     }
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.3'
-}
+    //=========这是bmob云服务=========//
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    //bmob-sdk
+    compile 'cn.bmob.android:bmob-sdk:3.5.5'
+    //如果你想应用能够兼容Android6.0，请添加此依赖(org.apache.http.legacy.jar)
+    compile 'cn.bmob.android:http-legacy:1.0'
+    compile project(':mkloadlibrary')
+    compile project(':spacetablayout')
+    compile 'com.android.support:cardview-v7:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile files('libs/filechoose.jar')
+    compile 'com.github.bumptech.glide:glide:3.5.2'
+    compile project(':FloatingViewLib')
+    compile project(':emojirain')
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile project(':jcvideoplayer-lib')
+    compile files('libs/classes.jar')
+    compile files('libs/Volley.jar')
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
+    compile project(':frescoUtil')
+    compile project(':vitamio')
+    compile project(':ViewPagerIndicatorlibrary')
+    compile 'org.sufficientlysecure:html-textview:1.3'
+    compile files('libs/MobTools-2017.0801.1522.jar')
+    compile files('libs/MobCommons-2017.0801.1522.jar')
+    compile files('libs/ShareSDK-Core-3.0.1.jar')
+    compile files('libs/ShareSDK-QQ-3.0.1.jar')
+    compile files('libs/ShareSDK-QZone-3.0.1.jar')
+    compile files('libs/ShareSDK-SinaWeibo-3.0.1.jar')
+    compile files('libs/ShareSDK-Wechat-3.0.1.jar')
+    compile files('libs/ShareSDK-Wechat-Core-3.0.1.jar')
+    compile files('libs/ShareSDK-Wechat-Favorite-3.0.1.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-3.0.1.jar')
+    compile project(':likeViewlib')
+    // 下面两个依赖是必须的
+    compile 'cn.bingoogolapple:bga-swipebacklayout:1.1.0@aar'
+    // 上面两个依赖是必须的
+    compile files('libs/galaxy.jar')
+    compile files('libs/turingSDK.jar')
+    compile files('libs/volley.jar')
+}//    compile 'com.google.code.gson:gson:2.8.1'
+
+  
