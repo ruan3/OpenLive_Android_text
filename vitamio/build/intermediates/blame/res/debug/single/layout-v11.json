@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media.xml",
+        "source": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\layout-v11\\notification_template_big_media.xml"
+    },
+    {
+        "merged": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_media_action.xml",
+        "source": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\layout-v11\\notification_media_action.xml"
+    },
+    {
+        "merged": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media_narrow_custom.xml",
+        "source": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\layout-v11\\notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media_narrow.xml",
+        "source": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\layout-v11\\notification_template_big_media_narrow.xml"
+    },
+    {
+        "merged": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_template_big_media_custom.xml",
+        "source": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\layout-v11\\notification_template_big_media_custom.xml"
+    },
+    {
+        "merged": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\res\\merged\\debug\\layout-v11\\notification_media_cancel_action.xml",
+        "source": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\layout-v11\\notification_media_cancel_action.xml"
+    }
+]

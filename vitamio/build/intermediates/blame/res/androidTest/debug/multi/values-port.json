@@ -1,0 +1,26 @@
+[
+    {
+        "outputFile": "F:\\ruanwork\\Agora_Native_SDK_for_Android_v1_11_0_FULL\\Agora_Native_SDK_for_Android_FULL\\samples\\OpenLive_Android\\vitamio\\build\\intermediates\\incremental\\mergeDebugAndroidTestResources\\merged.dir\\values-port\\values-port.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 55,
+                    "endOffset": 106
+                },
+                "from": {
+                    "file": "D:\\eclipse64\\eclipse_ADT\\sdk\\.android\\build-cache\\966213d00128e20965c8b9319feac79ca058b3c4\\output\\res\\values-port\\values-port.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 55,
+                        "endColumn": 55,
+                        "endOffset": 106
+                    }
+                }
+            }
+        ]
+    }
+]

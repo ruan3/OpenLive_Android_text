@@ -3,12 +3,228 @@
 
     <item
         is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\emojirain\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="e3195d51d013fbc3d5c8174b41f09ba0d8690b5a">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_dc5cca734e3ab52f69844034d2044d96c26639de.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\likeViewlib\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="526b29aacacebeb2c61ed51800ca538a44e5c0a7">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_eaa9a6cc075a036877c398bda798e3e54a58f2d5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-Wechat-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="225f6ecf6e0c3c6de3d0ca0e82f9ad7f801faee4">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-3.0.1_ee1a6405897a802211df7b994afd60f37e34f63a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\MobTools-2017.0801.1522.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="76e5ee885c150230001e72f7b46a4e7b91ee25c0">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\MobTools-2017.0801.1522_78990259570564227b1f88b055deae4e60b88590.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\turingSDK.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ef990069cd2696ce5f0e2fa784526e792c85f267">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\turingSDK_4e1c8db157efcc0c6cf129f3c909a526c66564ae.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\mkloadlibrary\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="61a68edb60eaa0198797fa2e77119938204591b2">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_7807283cb5ba0bf9db3d307a7c1555b38c408e96.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-Wechat-Favorite-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="a2056cba6fd9ea505d7cc98eec7861193805918b">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-Favorite-3.0.1_400f97d2aa52b35691864ea3dd4f71f1aa49216a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-Wechat-Moments-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="5007b4d17d692e57cc90584ab6a1c171b57c937e">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-Moments-3.0.1_e8ee68aa45202165d24e02a3cb74128ad1b92f65.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\FloatingViewLib\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6efa4184ad1756ba7d69c341d8721ee4f3277249">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_d2c5406ef40a8c98226010f4868adb805d0af3fc.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\vitamio\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4ff6d94dad4ae5ac34b049be84b1fa3104766252">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_bba1f90eee8aa9762761120b0048592219aed293.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\jcvideoplayer-lib\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="93854ccd5eacecc76b2bbba7009e286080fa655a">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_36fcb1a7ed842137efcf39fcfba1449fe83bdae2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="ab78ed461deab5206c4cac6bbcf60e6d963cfd85">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_cfb4a9df0731661ffc84fb5496a9b2990f6dd9e5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\ViewPagerIndicatorlibrary\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="045af8adc0e5f2421eaffad42b2266a1879652df">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_672eda4cfb1a3b701b92032d94d3bfd75463090e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\filechoose.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="30877bca7d1d9f09d7bc8b6ec3e6f5cf0fcf27fb">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\filechoose_2d3a0dcd846562da06e3edc22dc4bc50248c7da5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-Core-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="7b223a8a1cf08635e566d8744473667d17aa8374">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-Core-3.0.1_e2b136ff4ddfca52c210fe7e9e0f490dcfaf987a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-QQ-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="0c59c6592803252d2d2f08271c14631b94a43ced">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-QQ-3.0.1_2acf9e9f2426376cad628c4826e65d121d1bc358.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\spacetablayout\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="273813b59ec94a66b44161944cf73e34ea672571">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_7f073913050ef04f8037fc8454f83de0052ae1b4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-QZone-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="54d844ea090ec10e5ed2c31aad955200524653a0">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-QZone-3.0.1_d8e95a034215fbf060be1e26924a7177301ced90.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\MobCommons-2017.0801.1522.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="524ffbeafa01876a56bb4254a9908908f2fad415">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\MobCommons-2017.0801.1522_1e7508b53a92f04cb7d942aca5fa90381b4fe13b.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\libs\agora-rtc-sdk.jar"
         jumboMode="false"
         optimize="true"
         revision="25.0.2"
         sha1="1ef27e6472659acb8ad5e4de03803b15783110b2">
         <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\agora-rtc-sdk_ebdf75b942ecc91a66f3e5be83587c67de38a3bd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\frescoUtil\build\intermediates\bundles\default\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="c155c2ae2ce1e5285bb3d2f1eadcc2fe30bf91d6">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\classes_7ca465491763fc34d5b4d21030a3bb65a7ccac51.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\galaxy.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="34545ff3c9ca539c62095d104a6723eafeeea18f">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\galaxy_fcd51aa45a5a327c5e13b839014bdfd24bb9dbf9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\volley.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f571127a905f0b03d812f1eec5e8e4995b6c7280">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\volley_d41af077af12a94266081c491b32bb7c1f62d361.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-Wechat-Core-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1ac22d0e1ece0f142a88ff4ef911cd0882c1ac88">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-Wechat-Core-3.0.1_d562cc9c80aee03ea7f57012060b93218c131e5e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\libs\ShareSDK-SinaWeibo-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="f766d71adaac32b6bb15355baf9bd920cb98bf60">
+        <dex dex="F:\ruanwork\Agora_Native_SDK_for_Android_v1_11_0_FULL\Agora_Native_SDK_for_Android_FULL\samples\OpenLive_Android\app\build\intermediates\pre-dexed\debug\ShareSDK-SinaWeibo-3.0.1_439bcdbc06d39b4794dcade806d69b761cbc825d.jar" />
     </item>
 
 </items>
