@@ -360,6 +360,16 @@
             android:windowSoftInputMode="stateHidden|adjustResize"
             ></activity>
 
+        <activity android:name="io.agora.contract.activity.CommentActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            ></activity>
+
+        <activity
+            android:name="cn.bmob.v3.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+
     </application>
 
 </manifest>
