@@ -12,4 +12,9 @@
     <!--主界面整体字体大小-->
     <dimen name="normal_text_size">15sp</dimen>
 
+    <!--标题字体大小-->
+    <dimen name="title_size">20sp</dimen>
+    <dimen name="comment_size">20sp</dimen>
+    <dimen name="chat_width">200dp</dimen>
+
 </resources>
