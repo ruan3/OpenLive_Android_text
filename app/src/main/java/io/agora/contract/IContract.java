@@ -1,5 +1,7 @@
 package io.agora.contract;
 
+import cn.sharesdk.framework.Platform;
+
 /**
  * File Name:
  * Author:      ruan

@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -15,6 +17,7 @@ import android.support.transition.ChangeBounds;
 import android.support.transition.Transition;
 import android.support.transition.TransitionManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -28,13 +31,25 @@ import android.widget.Toast;
 
 import com.tuyenmonkey.mkloader.MKLoader;
 
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.UpdateListener;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformDb;
+import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.wechat.friends.Wechat;
+import io.agora.contract.utils.LogUtils;
+import io.agora.model.EventMsg;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
 import io.agora.openlive.ui.HomeActivity;
-import io.agora.openlive.ui.MainActivity;
 import io.agora.presenter.ILoginRegisterPresenter;
 import io.agora.presenter.IloginRegisterPresenterImpl;
 
@@ -66,10 +81,20 @@ public class LoginActivity extends Activity implements ILoginView{
     private ImageView logo;
     FrameLayout mainFrame;
     private Context context;
+    ImageView iv_qq;
+    ImageView iv_sina;
+    ImageView iv_wechat;
 
     MKLoader loading;
 
     ILoginRegisterPresenter loginPresenter;
+
+    private static final int COMPLETE = 0;//第三方登录完成
+    private static final int ERROR = 1;//第三方登录失败
+    private static final int CANCEL = 2;//取消第三方登录
+    Handler uiHandler;//更新ui
+    Platform platform;
+    String platformName;
 
 
     @Override
@@ -109,6 +134,12 @@ public class LoginActivity extends Activity implements ILoginView{
         forget = (TextView) findViewById(R.id.forget);
         loading = (MKLoader) findViewById(R.id.loading);
 
+        iv_sina = (ImageView) findViewById(R.id.iv_sina);
+        iv_qq = (ImageView) findViewById(R.id.iv_qq);
+        iv_wechat = (ImageView) findViewById(R.id.iv_wechat);
+
+
+
         logo = new ImageView(this);
         logo.setImageResource(R.drawable.logo);
         logo.setLayoutParams(frameParams);
@@ -129,7 +160,41 @@ public class LoginActivity extends Activity implements ILoginView{
 
         }
 
+        /**
+         * 新浪的第三方登录
+         */
+        iv_sina.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                loginPresenter.sinaLogin(SinaWeibo.NAME);
+            }
+        });
+
+        /**
+         * 微信的第三方登录
+         */
+        iv_wechat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                loginPresenter.sinaLogin(Wechat.NAME);
+            }
+        });
+
+        /**
+         * QQ的第三方登录
+         */
+        iv_qq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loading.setVisibility(View.VISIBLE);
+                loginPresenter.sinaLogin(QQ.NAME);
+            }
+        });
+
     }
+
 
     private void AnimationTranslation() {
         relativeLayout.post(new Runnable() {
@@ -364,9 +429,90 @@ public class LoginActivity extends Activity implements ILoginView{
         forget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loginPresenter.forgetPwd("1633486734@qq.com");
+                loginPresenter.forgetPwd(null,context);
             }
         });
+
+        //uiHandler在主线程中创建，所以自动绑定主线程
+        uiHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what){
+                    case COMPLETE:
+                        Toast.makeText(context,"第三方登录成功",Toast.LENGTH_SHORT).show();
+                        final PlatformDb platDB = platform.getDb();//获取数平台数据DB
+
+                        //通过DB获取各种数据
+//                        platDB.getToken();
+//                        platDB.getUserGender();
+//                        platDB.getUserIcon();
+//                        platDB.getUserId();
+//                        platDB.getUserName();
+                        LogUtils.e("第三方用户信息:"+platDB.getPlatformNname()+"头像--->"+platDB.getUserIcon());
+                        if(platDB.getPlatformNname().equals("SinaWeibo")){
+                            //bmob 在接收平台字段有规定，所以得判断一下
+                                platformName = "weibo";
+                        }else if(platDB.getPlatformNname().equals("QQ")){
+                                platformName = "qq";
+                        }
+                        //获取到第三方授权登录后，实现bmob的一键登录
+                        BmobUser.BmobThirdUserAuth thirdUserAuth = new BmobUser.BmobThirdUserAuth(platformName, platDB.getToken(),platDB.getExpiresIn()+"",platDB.getUserId());
+                        LogUtils.e("Bmob第三方登录对象getSnsType----->"+thirdUserAuth.getSnsType()+"token--->"+thirdUserAuth.getAccessToken()+"expirestime--->"
+                                +thirdUserAuth.getExpiresIn()+"userID--->"+thirdUserAuth.getUserId());
+                        //快速登录
+                        BmobUser.loginWithAuthData(thirdUserAuth, new LogInListener<JSONObject>() {
+                            @Override
+                            public void done(JSONObject jsonObject, BmobException e) {
+
+                                if(e==null){
+                                    LogUtils.e("Bmob第三方登录成功--->"+jsonObject.toString());
+                                    MyUser bmobUser =  BmobUser.getCurrentUser(MyUser.class);
+                                    if(bmobUser!=null){
+                                        LogUtils.e("是否有本地用户---->"+bmobUser.getUsername());
+                                        bmobUser.setUser_id_name(platDB.getUserName());
+                                        bmobUser.setAuthIconUrl(platDB.getUserIcon());
+                                        bmobUser.update(new UpdateListener() {
+                                            @Override
+                                            public void done(BmobException e) {
+                                                loading.setVisibility(View.GONE);
+                                                if(e!=null){
+                                                    LogUtils.e("更换昵称失败----->"+e.toString());
+                                                }else{
+                                                    LogUtils.e("更换昵称成功");
+                                                    Intent intent = new Intent(context,HomeActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            }
+                                        });
+                                    }else{
+                                        LogUtils.e("第三方登录没有保存到本地用户！");
+                                    }
+                                }else{
+                                    LogUtils.e("Bmob第三方登录失败---->"+e.toString());
+                                }
+
+                            }
+                        });
+//                        EventBus.getDefault().post(platDB);
+//                        Intent intent = new Intent(context,HomeActivity.class);
+////                        intent.putExtra("userName",platDB.getUserName());
+////                        intent.putExtra("userIconUrl",platDB.getUserIcon());
+//                        startActivity(intent);
+//                        finish();
+                        break;
+                    case ERROR:
+                        loading.setVisibility(View.GONE);
+                        Toast.makeText(context,"第三方登录失败",Toast.LENGTH_SHORT).show();
+                        break;
+                    case CANCEL:
+                        loading.setVisibility(View.GONE);
+                        Toast.makeText(context,"第三方登录取消",Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        };
+
     }
 
     private int inDp(int dp) {
@@ -376,6 +522,7 @@ public class LoginActivity extends Activity implements ILoginView{
         int px = (int) (dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
     }
+
 
     @Override
     public void doLoginResult(int code, String result) {
@@ -394,9 +541,12 @@ public class LoginActivity extends Activity implements ILoginView{
     public void doRegister(int code, String result) {
         loading.setVisibility(View.GONE);
         if(code == 0){
-            Toast.makeText(context,"注册成功"+result,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"注册成功",Toast.LENGTH_SHORT).show();
+            login.performClick();
+            login_email.setText(register_email.getText().toString());
+            login_pass.setText(register_pass.getText().toString());
         }else{
-            Toast.makeText(context,"注册失败"+result,Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,"注册失败",Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -410,6 +560,27 @@ public class LoginActivity extends Activity implements ILoginView{
         }else{
             Toast.makeText(context,reslut,Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+
+        this.platform = platform;
+        uiHandler.sendEmptyMessage(COMPLETE);
+    }
+
+    @Override
+    public void onError(Platform platform, int i, Throwable throwable) {
+
+        uiHandler.sendEmptyMessage(ERROR);
+
+    }
+
+    @Override
+    public void onCancel(Platform platform, int i) {
+
+        uiHandler.sendEmptyMessage(CANCEL);
+
     }
 
 
