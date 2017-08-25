@@ -17,11 +17,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.update.BmobUpdateAgent;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformDb;
 import io.agora.contract.activity.MineSettingActivity;
 import io.agora.contract.activity.ServiceCenterActivity;
 import io.agora.contract.utils.LogUtils;
+import io.agora.contract.utils.Utils;
 import io.agora.contract.view.CircleImageView;
 import io.agora.model.EventMsg;
 import io.agora.model.LiveVideos;
@@ -49,6 +51,8 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
     TextView tv_live;
     TextView tv_gift;
     LinearLayout ll_service;
+    LinearLayout ll_update;
+    TextView tv_app_version;
 
     private boolean isFirst = true;
 
@@ -67,6 +71,8 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         tv_gift = (TextView) view.findViewById(R.id.tv_gift);
         tv_live = (TextView) view.findViewById(R.id.tv_live);
         ll_service = (LinearLayout) view.findViewById(R.id.ll_service);
+        tv_app_version = (TextView) view.findViewById(R.id.tv_app_version);
+        ll_update = (LinearLayout) view.findViewById(R.id.ll_update);
         return view;
     }
 
@@ -77,7 +83,7 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         tv_like.setText("喜欢："+like);
         tv_live.setText("直播："+live);
         tv_gift.setText("礼物："+gift);
-
+        tv_app_version.setText(Utils.getVersionName(context)+"");
         if(isFirst&&BmobUser.getCurrentUser()!=null){
             iMineFragmentPresenter = new IMineFragmentPresentImpl(this);
             iMineFragmentPresenter.getData();
@@ -115,6 +121,14 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
                 Intent intent = new Intent(context, ServiceCenterActivity.class);
                 startActivity(intent);
 
+            }
+        });
+
+        //应用更新
+        ll_update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BmobUpdateAgent.forceUpdate(context);
             }
         });
 

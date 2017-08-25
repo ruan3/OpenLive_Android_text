@@ -16,12 +16,17 @@ import android.widget.Toast;
 
 import com.tuyenmonkey.mkloader.MKLoader;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import io.agora.contract.activity.CreateRoomActivity;
 import io.agora.contract.adapter.ContentAdapter;
 import io.agora.contract.utils.LogUtils;
+import io.agora.model.EventMsg;
 import io.agora.model.LiveVideos;
 import io.agora.openlive.R;
 import io.agora.presenter.IContentFragmentPresenter;
@@ -51,9 +56,12 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
 
     private Boolean isFrist = true;
 
+    private Boolean isGetdata = true;
+
 
     @Override
     public View initView() {
+        EventBus.getDefault().register(this);//注册eventBus,用来搞告诉主页不要更新了
         View view = View.inflate(context, R.layout.fragment_content,null);
         mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshLayout);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
@@ -207,7 +215,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
     public void setUserVisibleHint(boolean isVisibleToUser) {
 
 //        misVisibleToUser = isVisibleToUser;
-        LogUtils.e("ContentFragment--->isVisibleToUser"+isVisibleToUser);
+        LogUtils.e("ContentFragment--->isVisibleToUser=="+isVisibleToUser);
 
     }
 
@@ -220,7 +228,7 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
     public void RealTimeCallBack(int code, List<LiveVideos> videos) {
             //监听到数据更新后重新加载
         LogUtils.e("contentFragment是否在当前页面---->"+misVisibleToUser);
-        if(misVisibleToUser){
+        if(isGetdata){
             //当用户在当前页面才去加载数据更新数据
             iContentFragmentPresenter.getData();
         }
@@ -231,5 +239,26 @@ public class ContentFragment extends BaseFragment implements SwipeRefreshLayout.
         super.onHiddenChanged(hidden);
         LogUtils.e("contentFragment是否在当前页面hidden---->"+hidden);
         misVisibleToUser = hidden;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EventMsg eventMsg){
+
+        LogUtils.e("EventBus直播页面接受到消息----->"+eventMsg.getMsg());
+        if(eventMsg!=null){
+
+            if("Stop".equals(eventMsg.getMsg())){
+                isGetdata = false;
+            }else{
+                isGetdata = true;
+            }
+        }
+
     }
 }
