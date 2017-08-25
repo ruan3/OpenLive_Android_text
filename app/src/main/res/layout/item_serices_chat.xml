@@ -22,7 +22,7 @@
         android:layout_toRightOf="@id/iv_services"
         android:layout_alignBaseline="@id/iv_services"
         android:text="啦啦啦啦啦啦啦啦，我是买布的小行家"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="50dp"
         android:padding="5dp"
         android:layout_marginTop="5dp"
         />

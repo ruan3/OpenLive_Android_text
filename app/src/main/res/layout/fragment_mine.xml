@@ -188,15 +188,13 @@
         android:layout_height="56dp"
         android:background="?attr/selectableItemBackground"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/ic_mine_update"
-            />
+            android:src="@drawable/ic_mine_update" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -205,15 +203,21 @@
             android:layout_weight="1"
             android:text="应用更新"
             android:textColor="#060606"
-            android:textSize="15sp"
-            />
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3dp"
+            android:text="1.0.0"
+            android:textSize="@dimen/normal_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
-            android:src="@drawable/ic_go"
-            />
+            android:src="@drawable/ic_go" />
     </LinearLayout>
 
     <View

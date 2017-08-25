@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/hd_chatto_bg_normal"
         android:text="啦啦啦啦啦啦啦啦，我是买布的小行家"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="50dp"
         android:padding="5dp"
         android:layout_marginTop="5dp"
         />
