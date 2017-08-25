@@ -12,6 +12,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.ValueEventListener;
 import io.agora.contract.fragment.IContentFragment;
 import io.agora.contract.utils.LogUtils;
@@ -29,6 +30,7 @@ import io.agora.openlive.ui.ILiveRoomActivty;
 public class IContentFragmentPresenterImpl implements IContentFragmentPresenter {
 
     IContentFragment IContentFragment;
+    ILiveRoomActivty iLiveRoomActivty;
 
     public IContentFragmentPresenterImpl(IContentFragment IContentFragment){
         this.IContentFragment = IContentFragment;
@@ -131,7 +133,7 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
                     if(list.size()>0){
                         LiveVideos videos = list.get(0);
                         int online = videos.getAudience();
-                        iLiveRoomActivty.getOnlineNumber(online);
+                        iLiveRoomActivty.getOnlineNumber(videos);
                         LogUtils.e("查询数据成功");
                     }else{
 //                        Log.e("Com","查詢列表返回沒有數據");
@@ -146,9 +148,11 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
 
     }
 
+
     @Override
     public void RealTimeCallBack(final ILiveRoomActivty iLiveRoomActivty) {
 
+        this.iLiveRoomActivty = iLiveRoomActivty;
         final BmobRealTimeData rtd = new BmobRealTimeData();
         rtd.start(new ValueEventListener() {
 
@@ -165,6 +169,66 @@ public class IContentFragmentPresenterImpl implements IContentFragmentPresenter 
                     // 监听表更新
                     rtd.subTableUpdate("LiveVideos");
                 }
+            }
+        });
+
+    }
+
+    @Override
+    public void UpdataLikeandGif(String id,Integer likes, Integer gifs) {
+
+        LiveVideos liveVideos = new LiveVideos();
+        liveVideos.setLikes(likes);
+        liveVideos.setGift_times(gifs);
+        liveVideos.setLiving(true);
+        liveVideos.update(id, new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+
+                if(e==null){
+                    //更新礼物数和点赞成功
+                    LogUtils.e("直播页面更新礼物数和点赞数成功");
+                    iLiveRoomActivty.UpdataLikeAndGif(0,"");
+                }else{
+                    //更新失败
+                    LogUtils.e("直播页面更新礼物数和点赞数失败--->"+e.toString());
+                    iLiveRoomActivty.UpdataLikeAndGif(-1,e.toString());
+                }
+
+            }
+        });
+
+    }
+
+    /**
+     * 直播页第一次进入获取数据方法
+     * @param uid
+     * @param iLiveRoomActivty
+     */
+    @Override
+    public void getDataforOne(String uid, final ILiveRoomActivty iLiveRoomActivty) {
+
+        final BmobQuery<LiveVideos> liveVideos = new BmobQuery<>();
+        liveVideos.addWhereEqualTo("anchorName",uid);
+        liveVideos.findObjects(new FindListener<LiveVideos>() {
+            @Override
+            public void done(List<LiveVideos> list, BmobException e) {
+
+                if(list != null){
+                    //查询数据成功
+                    if(list.size()>0){
+                        LiveVideos videos = list.get(0);
+                        int online = videos.getAudience();
+                        iLiveRoomActivty.getDataResult(videos);
+                        LogUtils.e("查询数据成功");
+                    }else{
+//                        Log.e("Com","查詢列表返回沒有數據");
+                        LogUtils.e("查詢列表返回沒有數據");
+                        iLiveRoomActivty.getDataResult(null);
+                    }
+                }else{
+                }
+
             }
         });
 

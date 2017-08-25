@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.sharesdk.framework.Platform;
@@ -21,6 +22,8 @@ import cn.sharesdk.sina.weibo.SinaWeibo;
 import io.agora.contract.ILoginView;
 import io.agora.contract.utils.DialogUtils;
 import io.agora.contract.utils.LogUtils;
+import io.agora.contract.utils.MD5Untils;
+import io.agora.contract.utils.Validator;
 import io.agora.model.MyUser;
 import rx.Subscriber;
 import rx.subjects.Subject;
@@ -43,27 +46,57 @@ public class IloginRegisterPresenterImpl implements ILoginRegisterPresenter {
     @SuppressLint("UseValueOf")
     @Override
     public void doLogin(String uid, String pwd) {
+        String pwdMD5 = MD5Untils.getMD5(pwd);
+        if(Validator.isEmail(uid)){
+            BmobUser.loginByAccount(uid, pwd, new LogInListener<MyUser>() {
 
-        final MyUser myUser = new MyUser();
-        myUser.setUsername(uid);
-        myUser.setPassword(pwd);
-        myUser.loginObservable(BmobUser.class).subscribe(new Subscriber<BmobUser>() {
-            @Override
-            public void onCompleted() {
-                Log.i("Com","=====completed");
-            }
+                @Override
+                public void done(MyUser user, BmobException e) {
+                    if(user!=null){
+                        iLoginView.doLoginResult(0,user.getUsername());
+                        testGetCurrentUser();
+                    }else{
+                        iLoginView.doLoginResult(-1,e.toString());
+                    }
+                }
+            });
+        }else if(Validator.isMobile(uid)){
+            BmobUser.loginByAccount(uid, pwd, new LogInListener<MyUser>() {
 
-            @Override
-            public void onError(Throwable throwable) {
-                iLoginView.doLoginResult(-1,new BmobException(throwable).toString());
-            }
+                @Override
+                public void done(MyUser user, BmobException e) {
+                    if(user!=null){
+                        iLoginView.doLoginResult(0,user.getUsername());
+                        testGetCurrentUser();
+                    }else{
+                        iLoginView.doLoginResult(-1,e.toString());
+                    }
+                }
+            });
+        }else{
+            iLoginView.doLoginResult(-1,"请使用邮箱或者手机号登录！");
+        }
 
-            @Override
-            public void onNext(BmobUser bmobUser) {
-                iLoginView.doLoginResult(0,bmobUser.getUsername());
-                testGetCurrentUser();
-            }
-        });
+//        final MyUser myUser = new MyUser();
+//        myUser.setUsername(uid);
+//        myUser.setPassword(pwd);
+//        myUser.loginObservable(BmobUser.class).subscribe(new Subscriber<BmobUser>() {
+//            @Override
+//            public void onCompleted() {
+//                Log.i("Com","=====completed");
+//            }
+//
+//            @Override
+//            public void onError(Throwable throwable) {
+//                iLoginView.doLoginResult(-1,new BmobException(throwable).toString());
+//            }
+//
+//            @Override
+//            public void onNext(BmobUser bmobUser) {
+//                iLoginView.doLoginResult(0,bmobUser.getUsername());
+//                testGetCurrentUser();
+//            }
+//        });
 
     }
 
@@ -96,7 +129,13 @@ public class IloginRegisterPresenterImpl implements ILoginRegisterPresenter {
     public void doRegister(String uid, String pwd) {
         final MyUser myUser = new MyUser();
         myUser.setUsername(uid);
+        String pwdMD5 = MD5Untils.getMD5(pwd);
         myUser.setPassword(pwd);
+        if(Validator.isEmail(uid)){
+            myUser.setEmail(uid);
+        }else if(Validator.isMobile(uid)){
+            myUser.setMobilePhoneNumber(uid);
+        }
         myUser.setAge(18);
         myUser.setSex(true);
         myUser.signUp(new SaveListener<MyUser>() {
@@ -122,7 +161,7 @@ public class IloginRegisterPresenterImpl implements ILoginRegisterPresenter {
             @Override
             public void confirm(String result) {
                 if(result.contains("失败")){
-                    iLoginView.doResetPwd(-1,"重置密码失败："+result.toString());
+                    iLoginView.doResetPwd(-1,"重置密码："+result.toString());
                 }else{
                     iLoginView.doResetPwd(0,"重置密码请求成功，请到" + result + "邮箱进行密码重置操作");
                 }

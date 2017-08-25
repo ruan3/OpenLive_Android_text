@@ -17,4 +17,6 @@ public interface IContentFragmentPresenter {
     //直播页的方法
     public void getOnlinePerson(String uid, ILiveRoomActivty iLiveRoomActivty);
     public void RealTimeCallBack(ILiveRoomActivty iLiveRoomActivty);
+    public void UpdataLikeandGif(String id,Integer likes,Integer gifs);
+    public void getDataforOne(String uid,ILiveRoomActivty iLiveRoomActivty);
 }
