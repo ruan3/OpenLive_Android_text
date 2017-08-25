@@ -13,6 +13,8 @@ import io.agora.model.LiveVideos;
 
 public interface ILiveRoomActivty {
 
-    public void getOnlineNumber(Integer online);
+    public void getOnlineNumber(LiveVideos videos);
     public void RealTimeCallBack(int code,List<LiveVideos> videos);
+    public void UpdataLikeAndGif(int code,String result);
+    public void getDataResult(LiveVideos videos);
 }

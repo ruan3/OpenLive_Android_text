@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.update.BmobUpdateAgent;
 import eu.long1.spacetablayout.SpaceTabLayout;
 import io.agora.contract.fragment.ContentFragment;
 import io.agora.contract.fragment.MineFragment;
@@ -48,7 +49,8 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_home);
-
+//        BmobUpdateAgent.update(this);//正常的更新
+        BmobUpdateAgent.silentUpdate(this);
     }
 
     @Override

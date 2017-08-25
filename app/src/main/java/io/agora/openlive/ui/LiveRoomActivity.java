@@ -134,6 +134,9 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
     TextView tv_like;//显示点赞数
     TextView tv_gift;//显示礼物数
 
+    String liveId;
+    int preOnline;//上一次更新前人数
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -181,6 +184,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         String roomName = i.getStringExtra(ConstantApp.ACTION_KEY_ROOM_NAME);
         String broadcasterName = i.getStringExtra(ConstantApp.ACTION_KEY_BROCAST_NAME);
         Integer onlineNumber = i.getIntExtra(ConstantApp.ACTION_KEY_ONLINE_NUMBER,0);
+        liveId = i.getStringExtra(ConstantApp.ACTION_KEY_LIVE_ID);
 
         anchorID = roomName;
 
@@ -294,6 +298,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
 
         iContentFragmentPresenter = new IContentFragmentPresenterImpl(null);
         iContentFragmentPresenter.RealTimeCallBack(this);
+        iContentFragmentPresenter.getDataforOne(anchorID,this);
+
+        //通知直播列表页不要更新了
+        EventMsg eventMsg = new EventMsg();
+        eventMsg.setMsg("Stop");
+        EventBus.getDefault().post(eventMsg);
     }
 
     /**
@@ -341,13 +351,15 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
                 sendChannelMsg("sugar");
 
                 StarFloating(v);
-                if(isBroadcaster(isAudience)){
-                    gifts++;
-                    giftSetText(gifts);
-                }else{
-                    audience_gift++;
-                    giftSetText(audience_gift);
-                }
+                gifts++;
+                giftSetText(gifts);
+//                if(isBroadcaster(isAudience)){
+//                    gifts++;
+//                    giftSetText(gifts);
+//                }else{
+//                    audience_gift++;
+//                    giftSetText(audience_gift);
+//                }
 
 
             }
@@ -360,13 +372,15 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
 
                 sendChannelMsg("cool~");
                 likeFloating(v);
-                if(isBroadcaster(isAudience)){
-                    likes++;
-                    likeSetText(likes);
-                }else{
-                    audience_like++;
-                    likeSetText(audience_like);
-                }
+                likes++;
+                likeSetText(likes);
+//                if(isBroadcaster(isAudience)){
+//                    likes++;
+//                    likeSetText(likes);
+//                }else{
+//                    audience_like++;
+//                    likeSetText(audience_like);
+//                }
 
             }
         });
@@ -378,13 +392,15 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
 
                 sendChannelMsg("paper_air_plane");
                 PlaneFloating(v);
-                if(isBroadcaster(isAudience)){
-                    gifts++;
-                    giftSetText(gifts);
-                }else{
-                    audience_gift++;
-                    giftSetText(audience_gift);
-                }
+                gifts++;
+                giftSetText(gifts);
+//                if(isBroadcaster(isAudience)){
+//                    gifts++;
+//                    giftSetText(gifts);
+//                }else{
+//                    audience_gift++;
+//                    giftSetText(audience_gift);
+//                }
             }
         });
 
@@ -429,8 +445,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
 
 //        if(msgStr.contains("下小精灵")){
 //
-//            startEmoji();
-//
+//            startEmoj
 //        }
 
         int MAX_MESSAGE_COUNT = 16;
@@ -571,25 +586,25 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
                     //点赞动画
                     likeFloating(iv_like);
                     likes++;
-                    audience_like++;
-                    likeSetText(audience_like);
+//                    audience_like++;
+                    likeSetText(likes);
                 }else if(contentStr.equals("sugar")) {
                     //糖果动画
                     StarFloating(iv_star);
                     gifts++;
-                    audience_gift++;
-                    giftSetText(audience_gift);
+//                    audience_gift++;
+                    giftSetText(gifts);
                 }else if(contentStr.equals("paper_air_plane")) {
                     //飞机动画
                     PlaneFloating(iv_paper_airplane);
                     gifts++;
-                    audience_gift++;
-                    giftSetText(audience_gift);
+//                    audience_gift++;
+                    giftSetText(gifts);
                 }else if(contentStr.equals("下小精灵")){
                     //下小精灵动画
                     gifts++;
-                    audience_gift++;
-                    giftSetText(audience_gift);
+//                    audience_gift++;
+                    giftSetText(gifts);
                     startEmoji();
                     notifyMessageChanged(new Message(new User(peerUid, String.valueOf(peerUid)), new String(content)));
                 } else {
@@ -783,7 +798,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
     protected void deInitUIandEvent() {
         doLeaveChannel();
         event().removeEventHandler(this);
-
+        //通知直播列表页可以更新了
+        EventMsg eventMsg = new EventMsg();
+        eventMsg.setMsg("Start");
+        EventBus.getDefault().post(eventMsg);
         mUidsList.clear();
     }
 
@@ -1150,29 +1168,23 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
 
     }
 
-    /**
-     * EventBus的事件
-     * @param eventMsg
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(EventMsg eventMsg){
-
-        Log.e("Com","EventBus主页面接受到消息----->"+eventMsg.getMsg());
-        if(eventMsg!=null){
-
-            if("getOut".equals(eventMsg.getMsg())){
-                finish();
-            }
-        }
-
-    }
 
     @Override
-    public void getOnlineNumber(Integer online) {
+    public void getOnlineNumber(LiveVideos liveVideos) {
 
-        if(online!=null){
-
-            tv_online_pre.setText("在线人数："+online+"人");
+        if(liveVideos!=null){
+            int current = liveVideos.getAudience();
+            //让点赞数后礼物数同步
+//            audience_like = liveVideos.getLikes();
+//            audience_gift = liveVideos.getGift_times();
+//            if(preOnline != current){
+//                //当人数发生变化是更新
+//                if(isBroadcaster()){
+//                    iContentFragmentPresenter.UpdataLikeandGif(liveId,likes,gifts);
+//                }
+//            }
+            tv_online_pre.setText("在线人数："+current+"人");
+            preOnline = current;
         }
 
     }
@@ -1181,6 +1193,37 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
     public void RealTimeCallBack(int code, List<LiveVideos> videos) {
 
         iContentFragmentPresenter.getOnlinePerson(anchorID,this);
+
+    }
+
+    @Override
+    public void UpdataLikeAndGif(int code, String result) {
+
+        if(code==0){
+            LogUtils.e("更新礼物与点赞更新返回，成功");
+        }else{
+            LogUtils.e("更新礼物与点赞失败--->"+result);
+        }
+
+    }
+
+    @Override
+    public void getDataResult(LiveVideos videos) {
+
+        if(videos!=null){
+            int current = videos.getAudience();
+            //让点赞数后礼物数同步
+//            audience_like = liveVideos.getLikes();
+//            audience_gift = liveVideos.getGift_times();
+//            likes = videos.getLikes();
+//            gifts = videos.getGift_times();
+//            likeSetText(videos.getLikes());
+//            giftSetText(videos.getGift_times());
+            tv_online_pre.setText("在线人数："+current+"人");
+            if(TextUtils.isEmpty(liveId)){
+                liveId = videos.getObjectId();
+            }
+        }
 
     }
 
