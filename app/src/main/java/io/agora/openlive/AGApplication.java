@@ -11,6 +11,7 @@ import com.mob.MobSDK;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackManager;
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobSMS;
 import io.agora.openlive.model.WorkerThread;
 
 public class AGApplication extends Application {
