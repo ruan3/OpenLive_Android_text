@@ -131,6 +131,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     i.putExtra(ConstantApp.ACTION_KEY_CROLE, Constants.CLIENT_ROLE_AUDIENCE);
                     i.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME, videos.get(position).getAnchorName().getObjectId());
                     i.putExtra(ConstantApp.ACTION_KEY_ONLINE_NUMBER,videos.get(position).getAudience());
+                    i.putExtra(ConstantApp.ACTION_KEY_LIVE_ID,videos.get(position).getObjectId());
                     LogUtils.e("主播名字--->"+broadcastName);
                     LogUtils.e("在线人数---->"+videos.get(position).getAudience());
                     i.putExtra(ConstantApp.ACTION_KEY_BROCAST_NAME,broadcastName);

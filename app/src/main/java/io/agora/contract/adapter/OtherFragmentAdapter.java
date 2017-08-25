@@ -1,6 +1,7 @@
 package io.agora.contract.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -18,6 +19,9 @@ import com.shuyu.frescoutil.FrescoHelper;
 import java.util.List;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+import io.agora.common.Constant;
+import io.agora.contract.activity.CommentActivity;
+import io.agora.contract.utils.Constants;
 import io.agora.contract.utils.LogUtils;
 import io.agora.contract.utils.Utils;
 import io.agora.contract.view.CircleImageView;
@@ -178,6 +182,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_comment;
         TextView tv_like;
         LinearLayout ll_ding;
+        LinearLayout ll_comment;
 
         public GIFViewHolder(View itemView) {
             super(itemView);
@@ -193,6 +198,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
 
             ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
+            ll_comment = (LinearLayout) itemView.findViewById(R.id.ll_comment);
 
         }
 
@@ -227,6 +233,20 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
 
+            ll_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, CommentActivity.class);
+                    intent.putExtra(Constants.TYPE_COMMENT,TYPE_GIF);
+                    intent.putExtra(Constants.TYPE_URL,mediaItem.getGif().getImages().get(0));
+                    intent.putExtra(Constants.COMMENT_TITLE,mediaItem.getText());
+                    intent.putExtra(Constants.COMMENT_ORGIN,mediaItem.getU().getName()+"  "+mediaItem.getPasstime());
+                    intent.putExtra(Constants.CONTENT_ID,mediaItem.getId());
+                    mContext.startActivity(intent);
+                }
+            });
+
+
             ll_ding.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -255,6 +275,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_comment;
         TextView tv_like;
         LinearLayout ll_ding;
+        LinearLayout ll_comment;
 
         public VideoViewHolder(View itemView) {
             super(itemView);
@@ -271,6 +292,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
             ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
+            ll_comment = (LinearLayout) itemView.findViewById(R.id.ll_comment);
 
         }
 
@@ -308,6 +330,22 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
 
+            ll_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, CommentActivity.class);
+                    intent.putExtra(Constants.TYPE_COMMENT,TYPE_VIDEO);
+                    intent.putExtra(Constants.TYPE_URL,mediaItem.getVideo().getVideo().get(0));
+                    intent.putExtra(Constants.COMMENT_TITLE,mediaItem.getText());
+                    intent.putExtra(Constants.DURATION_VIDEO,utils.stringForTime(mediaItem.getVideo().getDuration() * 1000) + "");
+                    intent.putExtra(Constants.PLAY_TIMES,mediaItem.getVideo().getPlaycount() + "次播放");
+                    intent.putExtra(Constants.VIDEO_THUMBS,mediaItem.getVideo().getThumbnail().get(0));
+                    intent.putExtra(Constants.COMMENT_ORGIN,mediaItem.getU().getName()+"  "+mediaItem.getPasstime());
+                    intent.putExtra(Constants.CONTENT_ID,mediaItem.getId());
+                    mContext.startActivity(intent);
+                }
+            });
+
             ll_ding.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -334,6 +372,8 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_comment;
         TextView tv_like;
         LinearLayout ll_ding;
+        LinearLayout ll_comment;
+        String content;
 
         public TextViewHolder(View itemView) {
             super(itemView);
@@ -347,6 +387,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
             ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
+            ll_comment = (LinearLayout) itemView.findViewById(R.id.ll_comment);
 
         }
 
@@ -373,12 +414,29 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
                     buffer.append(tagsEntities.get(i).getName() + " ");
                 }
                 tv_video_kind_text.setText(buffer.toString());
+
+
             }
 
             //设置点赞，踩,转发
             tv_like.setText(mediaItem.getUp());
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
+            content = mediaItem.getText();
+            LogUtils.e("文字传输---->"+content);
+            ll_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, CommentActivity.class);
+                    intent.putExtra(Constants.TYPE_COMMENT,TYPE_TEXT);
+                    intent.putExtra(Constants.TEXT_CONTENT,content);
+                    intent.putExtra(Constants.COMMENT_TITLE,mediaItem.getText());
+                    intent.putExtra(Constants.COMMENT_ORGIN,mediaItem.getU().getName()+"  "+mediaItem.getPasstime());
+                    intent.putExtra(Constants.CONTENT_ID,mediaItem.getId());
+                    mContext.startActivity(intent);
+                }
+            });
+
             ll_ding.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -406,6 +464,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView tv_comment;
         TextView tv_like;
         LinearLayout ll_ding;
+        LinearLayout ll_comment;
 
         public ImageViewHolder(View itemView) {
             super(itemView);
@@ -420,6 +479,7 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
             tv_like = (TextView) itemView.findViewById(R.id.tv_like);
             ll_ding = (LinearLayout) itemView.findViewById(R.id.ll_ding);
+            ll_comment = (LinearLayout) itemView.findViewById(R.id.ll_comment);
         }
 
         public void setData(final NetAudioPagerData.ListEntity mediaItem){
@@ -462,6 +522,20 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
             tv_like.setText(mediaItem.getUp());
             tv_comment.setText(mediaItem.getDown() + "");
             tv_transmit.setText(mediaItem.getForward()+"");
+
+
+            ll_comment.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, CommentActivity.class);
+                    intent.putExtra(Constants.TYPE_COMMENT,TYPE_IMAGE);
+                    intent.putExtra(Constants.TYPE_URL,mediaItem.getImage().getBig().get(0));
+                    intent.putExtra(Constants.COMMENT_TITLE,mediaItem.getText());
+                    intent.putExtra(Constants.COMMENT_ORGIN,mediaItem.getU().getName()+"  "+mediaItem.getPasstime());
+                    intent.putExtra(Constants.CONTENT_ID,mediaItem.getId());
+                    mContext.startActivity(intent);
+                }
+            });
 
             ll_ding.setOnClickListener(new View.OnClickListener() {
                 @Override
