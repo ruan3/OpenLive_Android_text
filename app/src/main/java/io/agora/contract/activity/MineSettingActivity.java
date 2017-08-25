@@ -53,6 +53,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
     RelativeLayout rl_set_name;
     EditText et_set_userName;
     TextView tv_set_userCode;
+    RelativeLayout rl_change_pwd;
 
     FileChooserManager fm;
     IMineSettingPresenter iMineSettingPresenter;
@@ -81,6 +82,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
         rl_set_name = (RelativeLayout) findViewById(R.id.rl_set_name);
         et_set_userName = (EditText) findViewById(R.id.et_set_userName);
         tv_set_userCode = (TextView) findViewById(R.id.tv_set_userCode);
+        rl_change_pwd = (RelativeLayout) findViewById(R.id.rl_change_pwd);
         fm = new FileChooserManager(this);
         iMineSettingPresenter = new IMineSettingPresenterImpl(fm,this);
 
@@ -155,6 +157,25 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
             @Override
             public void onClick(View v) {
                 iMineSettingPresenter.loginOut(context);
+            }
+        });
+
+        rl_change_pwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                DialogUtils.getInstance().showChangePwd(context, new DialogUtils.CallBackListener() {
+                    @Override
+                    public void confirm(String result) {
+                        Toast.makeText(context,result,Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void cancle(String str) {
+                        Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
         });
 

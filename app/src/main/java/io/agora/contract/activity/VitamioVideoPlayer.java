@@ -512,6 +512,9 @@ public class VitamioVideoPlayer extends BaseActivity implements View.OnClickList
 
         setData();
 
+        showMediaController();
+
+
     }
 
     @Override
@@ -577,14 +580,17 @@ public class VitamioVideoPlayer extends BaseActivity implements View.OnClickList
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
 //                Toast.makeText(SystemVideoPlayer.this, "我被单击了", Toast.LENGTH_SHORT).show();
+                LogUtils.e("被点击了");
                 if (isshowMediaController) {
                     //隐藏
+                    LogUtils.e("Viatamio电影播放界面隐藏控制板");
                     hideMediaController();
                     //把隐藏消息移除
                     handler.removeMessages(HIDE_MEDIACONTROLLER);
 
                 } else {
                     //显示
+                    LogUtils.e("Viatamio电影播放界面显示控制板");
                     showMediaController();
                     //发消息隐藏
                     handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 4000);
@@ -981,6 +987,7 @@ public class VitamioVideoPlayer extends BaseActivity implements View.OnClickList
      * 显示控制面板
      */
     private void showMediaController() {
+        LogUtils.e("-----显示控制台----");
         media_controller.setVisibility(View.VISIBLE);
         isshowMediaController = true;
     }
@@ -990,6 +997,7 @@ public class VitamioVideoPlayer extends BaseActivity implements View.OnClickList
      * 隐藏控制面板
      */
     private void hideMediaController() {
+        LogUtils.e("-----隐藏控制台------");
         media_controller.setVisibility(View.GONE);
         isshowMediaController = false;
     }
@@ -1017,6 +1025,16 @@ public class VitamioVideoPlayer extends BaseActivity implements View.OnClickList
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 主界面不需要支持滑动返回，重写该方法永久禁用当前界面的滑动返回功能
+     *
+     * @return
+     */
+    @Override
+    public boolean isSupportSwipeBack() {
+        return false;
     }
 
 }

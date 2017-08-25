@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.update.BmobUpdateAgent;
 import io.agora.contract.LoginActivity;
 import io.agora.openlive.R;
 import io.agora.openlive.ui.BaseActivity;
