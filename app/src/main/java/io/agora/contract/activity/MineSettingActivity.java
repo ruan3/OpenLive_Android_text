@@ -34,6 +34,7 @@ import io.agora.model.EventMsg;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
 import io.agora.openlive.ui.BaseActivity;
+import io.agora.openlive.ui.SettingsActivity;
 import io.agora.presenter.IMineSettingPresenter;
 import io.agora.presenter.IMineSettingPresenterImpl;
 
@@ -51,6 +52,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
     TextView tv_set_userName;
     RelativeLayout rl_login_out;
     RelativeLayout rl_set_name;
+    RelativeLayout rl_live_setting;
     EditText et_set_userName;
     TextView tv_set_userCode;
     RelativeLayout rl_change_pwd;
@@ -83,6 +85,7 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
         et_set_userName = (EditText) findViewById(R.id.et_set_userName);
         tv_set_userCode = (TextView) findViewById(R.id.tv_set_userCode);
         rl_change_pwd = (RelativeLayout) findViewById(R.id.rl_change_pwd);
+        rl_live_setting = (RelativeLayout) findViewById(R.id.rl_live_setting);
         fm = new FileChooserManager(this);
         iMineSettingPresenter = new IMineSettingPresenterImpl(fm,this);
 
@@ -179,6 +182,14 @@ public class MineSettingActivity extends BaseActivity implements FileChooserList
             }
         });
 
+
+        rl_live_setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

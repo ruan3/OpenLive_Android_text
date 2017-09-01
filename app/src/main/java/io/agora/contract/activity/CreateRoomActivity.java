@@ -1,12 +1,14 @@
 package io.agora.contract.activity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,6 +33,7 @@ import cn.bmob.v3.listener.ProgressCallback;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
+import io.agora.contract.utils.LogUtils;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
@@ -47,7 +50,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 /**
- * File Name:
+ * File Name:   创建房间界面
  * Author:      ruan
  * Write Dates: 2017/7/7
  * Description:
@@ -63,6 +66,8 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
 
     ICreateRoomPresenter iCreateRoomPresenter;
     File Image;
+
+    BmobFile bmobFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,8 +150,10 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         dialog.setIndeterminate(false);
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnKeyListener(new DialogOnKeyListener());
         dialog.show();
-        final BmobFile bmobFile = new BmobFile(file);
+        bmobFile = new BmobFile(file);
+
 
         bmobFile.uploadObservable(new ProgressCallback() {
             @Override
@@ -183,7 +190,7 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
             @Override
             public void onError(Throwable e) {
                 Log.e("Com", "屌你更新图片出错了----->"+e.toString());
-                Toast.makeText(CreateRoomActivity.this,"屌你出错了----->"+e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(CreateRoomActivity.this,"创建房间失败----->"+e.toString(),Toast.LENGTH_LONG).show();
                                 dialog.dismiss();
                 choosedFile=null;
             }
@@ -282,8 +289,9 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         dialog.setIndeterminate(false);
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnKeyListener(new DialogOnKeyListener());
         dialog.show();
-        final BmobFile bmobFile = new BmobFile(file);
+        bmobFile = new BmobFile(file);
         //这个用到了类似rxjava的方式开发
         bmobFile.uploadObservable(new ProgressCallback() {//上传文件操作
             @Override
@@ -330,7 +338,7 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
 
             @Override
             public void onError(Throwable e) {
-                Toast.makeText(CreateRoomActivity.this,"屌你出错了----->"+e.toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(CreateRoomActivity.this,"创建房间失败----->"+e.toString(),Toast.LENGTH_LONG).show();
                 dialog.dismiss();
                 choosedFile=null;
             }
@@ -391,6 +399,46 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
     public void back(View view){
 
         finish();
+
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+            LogUtils.e("创建房间点击返回---->");
+
+
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * Dialog 监听返回事件
+     * @author lizhiting
+     *
+     */
+    public class DialogOnKeyListener implements DialogInterface.OnKeyListener {
+
+        @Override
+        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_BACK&& event.getRepeatCount() == 0) {
+                LogUtils.e("创建房间点击返回dialog---->");
+                if(bmobFile != null){
+                    /**
+                     * 这样是不行的，因为dialog会消费activity的返回事件，所以在这里写，没有作用(activity)
+                     * 通过重写，DialogInterfacce.OnekeyListener重写返回键监听
+                     */
+                    LogUtils.e("创建房间取消---->");
+                    //当在创建房间过程中，点击返回，取消创建房间
+                    bmobFile.cancel();
+                    return true;
+                }
+
+            }
+            return false;
+        }
 
     }
 
