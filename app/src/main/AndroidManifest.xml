@@ -370,6 +370,11 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
 
+        <activity android:name="io.agora.contract.activity.FeedBackActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            ></activity>
+
     </application>
 
 </manifest>
