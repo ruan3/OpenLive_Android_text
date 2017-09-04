@@ -12,6 +12,7 @@ import cn.bingoogolapple.swipebacklayout.BGASwipeBackHelper;
 import cn.bingoogolapple.swipebacklayout.BGASwipeBackManager;
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobSMS;
+import io.agora.contract.crash.CrashHandler;
 import io.agora.openlive.model.WorkerThread;
 
 public class AGApplication extends Application {
@@ -40,6 +41,9 @@ public class AGApplication extends Application {
         if(!(context instanceof MobApplication)){
             MobSDK.init(context.getApplicationContext());
         }
+        //初始化异常处理器
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(context);
     }
 
 

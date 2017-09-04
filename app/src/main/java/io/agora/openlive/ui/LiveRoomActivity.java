@@ -137,6 +137,8 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
     String liveId;
     int preOnline;//上一次更新前人数
 
+    String userName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -268,6 +270,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         worker().joinChannel(roomName, config().mUid);
 
         TextView textRoomName = (TextView) findViewById(R.id.room_name);
+        userName = BmobUser.getCurrentUser(MyUser.class).getUser_id_name();
         if(TextUtils.isEmpty(broadcasterName)){
             textRoomName.setText("主播："+BmobUser.getCurrentUser(MyUser.class).getUser_id_name());
         }else{
@@ -493,11 +496,13 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
                 if (actionId == EditorInfo.IME_ACTION_SEND
                         || (event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     String msgStr = v.getText().toString();
+                    msgStr = userName + "："+msgStr;
                     if (TextUtils.isEmpty(msgStr)) {
                         return false;
                     }
+
                     sendChannelMsg(msgStr);
-                    if(msgStr.equals("下小精灵")){
+                    if(msgStr.contains("下小精灵")){
                         startEmoji();
                     }
                     v.setText("");
@@ -600,7 +605,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
                     gifts++;
 //                    audience_gift++;
                     giftSetText(gifts);
-                }else if(contentStr.equals("下小精灵")){
+                }else if(contentStr.contains("下小精灵")){
                     //下小精灵动画
                     gifts++;
 //                    audience_gift++;
