@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.android.volley.RequestQueue;
-
 import java.util.List;
 
 import io.agora.contract.adapter.OtherFragmentAdapter;
@@ -18,6 +16,7 @@ import io.agora.contract.fragment.IOtherFragment;
 import io.agora.contract.utils.CacheUtils;
 import io.agora.contract.utils.Constants;
 import io.agora.contract.utils.LogUtils;
+import io.agora.contract.view.EndLessOnScrollListener;
 import io.agora.model.NetAudioPagerData;
 import io.agora.openlive.R;
 import io.agora.presenter.IOtherFragmentPresenter;
@@ -39,8 +38,13 @@ public class FunnyPager extends BasePager implements IOtherFragment,SwipeRefresh
     OtherFragmentAdapter otherFragmentAdapter;
     boolean isFirst = true;
 
+    int page = 0;
+    int pageIndex = 40;
 
+    GridLayoutManager manager;
     Context context;
+
+    List<NetAudioPagerData.ListEntity> mDatas;
 
     public FunnyPager(Context context){
         this.context = context;
@@ -63,10 +67,11 @@ public class FunnyPager extends BasePager implements IOtherFragment,SwipeRefresh
 
         LogUtils.e("funnpager---->InitData()");
         iOtherFragmentPresenter = new IOtherFragmentPresenterImpl(context,this);
-        iOtherFragmentPresenter.getData();
+        iOtherFragmentPresenter.getData(page,pageIndex);
         if(isFirst){
             LogUtils.e("funnypager------>getData()");
-            iOtherFragmentPresenter.getData();
+//            iOtherFragmentPresenter.getData(page,pageIndex);
+//            page = pageIndex;
             isFirst = false;
         }else{
 
@@ -81,7 +86,7 @@ public class FunnyPager extends BasePager implements IOtherFragment,SwipeRefresh
 
         other_refreshLayout.setColorSchemeResources(R.color.colorPrimary, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
         other_refreshLayout.setOnRefreshListener(this);
-        GridLayoutManager manager = new GridLayoutManager(context, 1);
+        manager = new GridLayoutManager(context, 1);
         other_recyclerView.setLayoutManager(manager);
 //        other_recyclerView.setHasFixedSize(true);
         other_recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -124,11 +129,27 @@ public class FunnyPager extends BasePager implements IOtherFragment,SwipeRefresh
 
         other_refreshLayout.setRefreshing(false);
         if(code == 0){
+            if(otherFragmentAdapter==null){
+                otherFragmentAdapter = new OtherFragmentAdapter(context,datas);
+                other_recyclerView.setAdapter(otherFragmentAdapter);
+            }else{
+                if(datas!=null){
+                    otherFragmentAdapter.addAll(datas);
+//                    otherFragmentAdapter.notifyDataSetChanged();
+                }
+            }
 
             LogUtils.e("解析funnpager---->json数据成功---->"+datas.size());
-            otherFragmentAdapter = new OtherFragmentAdapter(context,datas);
-            other_recyclerView.setAdapter(otherFragmentAdapter);
-
+            otherFragmentAdapter.addFooterView(R.layout.layout_footer_funny);
+            other_recyclerView.addOnScrollListener(new EndLessOnScrollListener(manager) {
+                @Override
+                public void onLoadMore() {
+                    otherFragmentAdapter.setFooterVisible(View.VISIBLE);
+                    LogUtils.e("funnpage请求更多走不走---->"+pageIndex);
+//                    iOtherFragmentPresenter.getData(page,pageIndex+10);
+//                    page = pageIndex;
+                }
+            });
 
         }else{
 
@@ -142,7 +163,8 @@ public class FunnyPager extends BasePager implements IOtherFragment,SwipeRefresh
     public void onRefresh() {
 
         other_refreshLayout.setRefreshing(true);
-        iOtherFragmentPresenter.getData();
+        LogUtils.e("娱乐界面更新加载！");
+        iOtherFragmentPresenter.getData(0,20);
 
     }
 }
