@@ -1,6 +1,7 @@
 package io.agora.presenter;
 
 import io.agora.model.Comment;
+import io.agora.model.FeedBackBean;
 
 /**
  * File Name:
@@ -13,5 +14,6 @@ public interface ICommentPresenter {
 
     public void getData(String commentId);
     public void updataData(Comment comment);
+    public void updataFeedbck(FeedBackBean feedBackBean);
 
 }

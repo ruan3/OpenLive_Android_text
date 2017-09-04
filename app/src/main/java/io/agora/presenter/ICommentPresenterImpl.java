@@ -11,6 +11,7 @@ import io.agora.contract.activity.IComment;
 import io.agora.contract.utils.LogUtils;
 import io.agora.model.Comment;
 import io.agora.model.CommentBean;
+import io.agora.model.FeedBackBean;
 
 /**
  * File Name:   评论的presenter
@@ -82,6 +83,11 @@ public class ICommentPresenterImpl implements ICommentPresenter {
                 }
             }
         });
+
+    }
+
+    @Override
+    public void updataFeedbck(FeedBackBean feedBackBean) {
 
     }
 }

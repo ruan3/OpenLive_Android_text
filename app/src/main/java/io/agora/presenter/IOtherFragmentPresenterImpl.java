@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import java.util.List;
 
 import io.agora.contract.fragment.IOtherFragment;
+import io.agora.contract.utils.Apis;
 import io.agora.contract.utils.Constants;
 import io.agora.contract.utils.LogUtils;
 import io.agora.model.NetAudioPagerData;
@@ -41,9 +42,9 @@ public class IOtherFragmentPresenterImpl implements IOtherFragmentPresenter {
     }
 
     @Override
-    public void getData() {
+    public void getData(int page,int pageIndex) {
 
-        StringRequest request = new StringRequest(Request.Method.GET, Constants.ALL_RES_URL, new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, getUrl(page,pageIndex), new Response.Listener<String>() {
             @Override
             public void onResponse(Request<String> request, String s) {
                 LogUtils.e("獲取到看看網絡數據："+s);
@@ -96,6 +97,17 @@ public class IOtherFragmentPresenterImpl implements IOtherFragmentPresenter {
 
         }
 
+    }
+
+    private String getUrl(int page,int pageIndex) {
+
+        StringBuilder sb=new StringBuilder();
+
+            sb.append(Constants.ALL_RES_ONE).append(page);
+
+        sb.append("-").append(pageIndex).append(Constants.All_res_two);
+        LogUtils.e("娱乐请求地址大修改---->"+sb.toString());
+        return sb.toString();
     }
 
 

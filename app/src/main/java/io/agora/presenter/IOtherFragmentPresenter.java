@@ -9,7 +9,7 @@ package io.agora.presenter;
 
 public interface IOtherFragmentPresenter {
 
-    public void getData();
+    public void getData(int page,int pageIndex);
     public void processData(String result);
 
 }
