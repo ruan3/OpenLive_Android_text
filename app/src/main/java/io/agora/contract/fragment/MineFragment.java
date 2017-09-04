@@ -20,6 +20,7 @@ import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.update.BmobUpdateAgent;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformDb;
+import io.agora.contract.activity.FeedBackActivity;
 import io.agora.contract.activity.MineSettingActivity;
 import io.agora.contract.activity.ServiceCenterActivity;
 import io.agora.contract.utils.LogUtils;
@@ -52,6 +53,7 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
     TextView tv_gift;
     LinearLayout ll_service;
     LinearLayout ll_update;
+    LinearLayout reply;
     TextView tv_app_version;
 
     private boolean isFirst = true;
@@ -73,6 +75,7 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         ll_service = (LinearLayout) view.findViewById(R.id.ll_service);
         tv_app_version = (TextView) view.findViewById(R.id.tv_app_version);
         ll_update = (LinearLayout) view.findViewById(R.id.ll_update);
+        reply = (LinearLayout) view.findViewById(R.id.reply);
         return view;
     }
 
@@ -129,6 +132,15 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
             @Override
             public void onClick(View v) {
                 BmobUpdateAgent.forceUpdate(context);
+            }
+        });
+
+        //意见反馈
+        reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, FeedBackActivity.class);
+                startActivity(intent);
             }
         });
 

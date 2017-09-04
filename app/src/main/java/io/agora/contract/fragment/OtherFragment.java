@@ -58,7 +58,7 @@ public class OtherFragment extends BaseFragment implements IOtherFragment,SwipeR
         iOtherFragmentPresenter = new IOtherFragmentPresenterImpl(context,this);
         if(isFirst){
 
-            iOtherFragmentPresenter.getData();
+//            iOtherFragmentPresenter.getData();
             isFirst = false;
         }else{
 
@@ -136,7 +136,7 @@ public class OtherFragment extends BaseFragment implements IOtherFragment,SwipeR
     @Override
     public void onRefresh() {
         other_refreshLayout.setRefreshing(true);
-        iOtherFragmentPresenter.getData();
+//        iOtherFragmentPresenter.getData();
 
     }
 }
