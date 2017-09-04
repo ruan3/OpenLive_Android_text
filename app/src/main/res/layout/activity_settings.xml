@@ -5,31 +5,73 @@
     android:layout_height="match_parent"
     tools:context=".ui.SettingsActivity">
 
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_gravity="center_vertical"
+        >
+
+        <Button
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ic_back"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:onClick="back"
+            />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:text="直播设置"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"/>
+
+        <Button
+            android:id="@+id/btn_setting_confrim"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ic_setting_confrim"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            />
+    </RelativeLayout>
+
     <LinearLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="72dp"
+        android:layout_below="@id/toolbar"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Resolution\n(Height * Width)"
+            android:text="分辨率\n(高 * 宽)"
             android:gravity="center"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Frame Rate\n(fps)"
+            android:text="帧频\n(fps)"
             android:gravity="center"/>
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Bit Rate\n(kbps)"
+            android:text="位速率\n(kbps)"
             android:gravity="center"/>
 
     </LinearLayout>
