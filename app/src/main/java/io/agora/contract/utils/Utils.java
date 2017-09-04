@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.TrafficStats;
 
+import java.io.File;
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -21,6 +22,19 @@ public class Utils {
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
+    }
+
+    /**
+     * 删除单个文件
+     * @param   filePath    被删除文件的文件名
+     * @return 文件删除成功返回true，否则返回false
+     */
+    public boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.isFile() && file.exists()) {
+            return file.delete();
+        }
+        return false;
     }
 
     /**

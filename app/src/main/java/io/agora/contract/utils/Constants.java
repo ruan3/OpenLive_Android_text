@@ -23,6 +23,8 @@ public class Constants {
      */
     public static final String ALL_RES_URL = "http://s.budejie.com/topic/list/jingxuan/1/budejie-android-6.2.8/0-20.json?market=baidu&udid=863425026599592&appname=baisibudejie&os=4.2.2&client=android&visiting=&mac=98%3A6c%3Af5%3A4b%3A72%3A6d&ver=6.2.8";
 //  
+    public static final String ALL_RES_ONE = "http://s.budejie.com/topic/list/jingxuan/1/budejie-android-6.2.8/";
+    public static final String All_res_two = ".json?market=baidu&udid=863425026599592&appname=baisibudejie&os=4.2.2&client=android&visiting=&mac=98%3A6c%3Af5%3A4b%3A72%3A6d&ver=6.2.8";
 
     public static final String TYPE_COMMENT = "type_comment";
     public static final String TYPE_URL = "type_url";
