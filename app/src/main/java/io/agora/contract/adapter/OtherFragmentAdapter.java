@@ -24,9 +24,11 @@ import io.agora.contract.activity.CommentActivity;
 import io.agora.contract.utils.Constants;
 import io.agora.contract.utils.LogUtils;
 import io.agora.contract.utils.Utils;
+import io.agora.contract.view.BaseViewHolder;
 import io.agora.contract.view.CircleImageView;
 import io.agora.contract.view.MyJCVideoPlayerStandard;
 import io.agora.model.NetAudioPagerData;
+import io.agora.model.NewsEntity;
 import io.agora.onekeyshare.OnekeyShare;
 import io.agora.openlive.R;
 import pl.droidsonroids.gif.GifImageView;
@@ -70,15 +72,25 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
      */
     private static final int TYPE_AD = 4;
 
+
+    /**
+     * 底部加载更多
+     */
+    private static final int TYPE_FOOTVIEW = 5;
+
     /**
      * 当前类型
      */
     public int currentType = TYPE_IMAGE;
 
-    private final List<NetAudioPagerData.ListEntity> mDatas;
+    private List<NetAudioPagerData.ListEntity> mDatas;
     private Context mContext;
     private Utils utils;
     private LayoutInflater mLayoutInflater;
+
+    private int viewFooter;
+    private View footerView;
+    private NewsAdapter.OnItemClickListener mOnItemClickListener;
 
     public OtherFragmentAdapter(Context context,List<NetAudioPagerData.ListEntity> datas){
 
@@ -104,6 +116,9 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
                 return new VideoViewHolder(mLayoutInflater.inflate(R.layout.item_video_all,null));
             case TYPE_TEXT:
                 return new TextViewHolder(mLayoutInflater.inflate(R.layout.item_text_all,null));
+            case TYPE_FOOTVIEW:
+                footerView = LayoutInflater.from(mContext).inflate(viewFooter, parent, false);
+                return new BaseViewHolder(footerView);
 
         }
 
@@ -140,6 +155,11 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public int getItemViewType(int position) {
 
+        if (viewFooter != 0 && position == getItemCount() - 1) {
+            currentType = TYPE_FOOTVIEW;
+            return currentType;
+        }
+
         NetAudioPagerData.ListEntity listEntity = mDatas.get(position);
         String type = listEntity.getType();//video,text,image,gif,ad
         if ("video".equals(type)) {
@@ -159,7 +179,13 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return mDatas.size();
+
+        int count = (mDatas == null ? 0 : mDatas.size());
+        if (viewFooter != 0) {
+            count++;
+        }
+        return count;
+//        return mDatas.size();
     }
 
     class ADViewHolder extends RecyclerView.ViewHolder{
@@ -652,6 +678,29 @@ public class OtherFragmentAdapter extends RecyclerView.Adapter<RecyclerView.View
 
 // 启动分享GUI
         oks.show(mContext);
+    }
+
+    public void addFooterView(int footerView) {
+        this.viewFooter = footerView;
+        notifyItemInserted(getItemCount() - 1);
+    }
+
+    public void setFooterVisible(int visible) {
+        footerView.setVisibility(visible);
+    }
+
+    //设置点击事件
+    public void setOnItemClickLitener(NewsAdapter.OnItemClickListener mLitener) {
+        mOnItemClickListener = mLitener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position, BaseViewHolder viewHolder);
+    }
+
+    public void addAll(List<NetAudioPagerData.ListEntity> elements) {
+        mDatas = elements;
+        notifyDataSetChanged();
     }
 
 }
