@@ -53,6 +53,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     Context context;
     List<LiveVideos> videos;
     String broadcastName ;
+    String headerURl;//头像地址
 
     public ContentAdapter(Context context, List<LiveVideos> videos){
 
@@ -90,14 +91,16 @@ public class ContentAdapter extends RecyclerView.Adapter {
                         if(user_icon!=null){
                             //走正常注册登录流程，获取下来的直播数据
                             Glide.with(context).load(user_icon.getUrl()).diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .placeholder(R.drawable.video_default_icon)
-                                    .error(R.drawable.video_default_icon).into( ((contentHodler)holder).cv_user_icon);
+                                    .placeholder(R.drawable.ic_default_header)
+                                    .error(R.drawable.ic_default_header).into( ((contentHodler)holder).cv_user_icon);
+                            headerURl = user_icon.getUrl();
                         }else if(!TextUtils.isEmpty(list.get(0).getAuthIconUrl())){
                             //走第三方登录的流程
                             LogUtils.e("走第三方流程获取头像----->"+list.get(0).getAuthIconUrl());
                             Glide.with(context).load(list.get(0).getAuthIconUrl()).diskCacheStrategy(DiskCacheStrategy.ALL)
 //                                    .placeholder(R.drawable.video_default_icon)
                                     .error(R.drawable.video_default_icon).into( ((contentHodler)holder).cv_user_icon);
+                            headerURl = list.get(0).getAuthIconUrl();
                         }
 
                     }else{
@@ -132,6 +135,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     i.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME, videos.get(position).getAnchorName().getObjectId());
                     i.putExtra(ConstantApp.ACTION_KEY_ONLINE_NUMBER,videos.get(position).getAudience());
                     i.putExtra(ConstantApp.ACTION_KEY_LIVE_ID,videos.get(position).getObjectId());
+                    i.putExtra(ConstantApp.ACTION_KEY_HEADER_URL,headerURl);
                     LogUtils.e("主播名字--->"+broadcastName);
                     LogUtils.e("在线人数---->"+videos.get(position).getAudience());
                     i.putExtra(ConstantApp.ACTION_KEY_BROCAST_NAME,broadcastName);
