@@ -1,9 +1,11 @@
 package io.agora.contract.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.nfc.tech.TagTechnology;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -30,10 +32,13 @@ import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.ProgressCallback;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
+import io.agora.contract.utils.CacheUtils;
 import io.agora.contract.utils.LogUtils;
+import io.agora.model.Comment;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
 import io.agora.openlive.R;
@@ -69,10 +74,15 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
 
     BmobFile bmobFile;
 
+    int ComplainTimes;
+
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_room);
+        context = this;
         iCreateRoomPresenter = new ICreateRoomPresenterImpl();
     }
 
@@ -94,13 +104,13 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
         btn_confrim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(!TextUtils.isEmpty(et_room_title.getText().toString())&&Image!=null){
 
                     /**
                      * 上传图片
                      */
 //                    uploadMovoieFile(Image);
-
                     UpdateRoomState(Image);
                 }
             }
@@ -110,29 +120,57 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
 
     public void UpdateRoomState(final File file){
 
-        //先查询到数据的id
-        BmobQuery<LiveVideos> query = new BmobQuery<>();
-        query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
-        query.findObjects(new FindListener<LiveVideos>() {
-            @Override
-            public void done(List<LiveVideos> list, BmobException e) {
-                if(list!=null&&list.size()>0){
+        String roomId = CacheUtils.getString(context,io.agora.contract.utils.Constants.liveRoomID);
+        if(!TextUtils.isEmpty(roomId)){
+            LogUtils.e("有roomid--->"+roomId);
+            BmobQuery<LiveVideos> query = new BmobQuery<LiveVideos>();
+            query.getObject(roomId, new QueryListener<LiveVideos>() {
 
-                    //查询成功，得到当前liveVideoId
-                     String liveId = list.get(0).getObjectId();
-                    final LiveVideos liveVideos = list.get(0);
-                    Log.e("Com","更新图片上一句走不走----->");
-                    UpdateRoom(file,liveVideos);
-
-                }else if(e!=null){
-                    Log.e("Com","查找報錯了------>");
-                    uploadMovoieFile(Image);
-                }else if(e == null){
-                    Log.e("Com","查找報錯了------>e==null");
-                    uploadMovoieFile(Image);
+                @Override
+                public void done(LiveVideos liveVideos, BmobException e) {
+                    if(e==null){
+                        LogUtils.e("数据中有房间--->");
+                        UpdateRoom(file,liveVideos);
+                    }else{
+                        LogUtils.e("查询房间出错--->"+e.toString());
+                    }
                 }
-            }
-        });
+
+            });
+        }else{
+            LogUtils.e("没有有roomid--->"+roomId);
+            //先查询到数据的id
+            BmobQuery<LiveVideos> query = new BmobQuery<>();
+            query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
+            query.findObjects(new FindListener<LiveVideos>() {
+                @Override
+                public void done(List<LiveVideos> list, BmobException e) {
+                    if(list!=null&&list.size()>0){
+
+                        //查询成功，得到当前liveVideoId
+                        String liveId = list.get(0).getObjectId();
+                        CacheUtils.putString(context, io.agora.contract.utils.Constants.liveRoomID,liveId);
+                        final LiveVideos liveVideos = list.get(0);
+                        Log.e("Com","更新图片上一句走不走----->");
+                        ComplainTimes = liveVideos.getComplainTimes();
+                        if(ComplainTimes>10){
+                            Toast.makeText(CreateRoomActivity.this,"大佬，你被多次举报，不能再进行直播了，除非给我钱！",Toast.LENGTH_LONG).show();
+                        }else{
+
+                            UpdateRoom(file,liveVideos);
+                        }
+
+                    }else if(e!=null){
+                        Log.e("Com","查找報錯了------>");
+                        uploadMovoieFile(Image);
+                    }else if(e == null){
+                        Log.e("Com","查找報錯了------>e==null");
+                        uploadMovoieFile(Image);
+                    }
+                }
+            });
+        }
+
 
     }
 
@@ -452,5 +490,9 @@ public class CreateRoomActivity extends BaseActivity implements FileChooserListe
     }
 
     private Observable<Void> upDateObservable(BmobObject obj){ return obj.updateObservable();}
+
+    private Observable<Void> updateObservableByID(BmobObject obj,String id){
+        return obj.updateObservable(id);
+    }
 
 }
