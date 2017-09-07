@@ -36,4 +36,6 @@ public class Constants {
     public static final String VIDEO_THUMBS = "video_thumbs";
     public static final String CONTENT_ID = "cotent_id";
 
+    public static final String liveRoomID = "liveRoomId";//直播房间的id
+
 }
