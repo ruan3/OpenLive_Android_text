@@ -88,7 +88,7 @@ public class MineFragment extends BaseFragment implements  IMineFragment{
         tv_gift.setText("礼物："+gift);
         tv_app_version.setText(Utils.getVersionName(context)+"");
         if(isFirst&&BmobUser.getCurrentUser()!=null){
-            iMineFragmentPresenter = new IMineFragmentPresentImpl(this);
+            iMineFragmentPresenter = new IMineFragmentPresentImpl(this,context);
             iMineFragmentPresenter.getData();
             iMineFragmentPresenter.RealTimeCallBack();
             isFirst = false;
