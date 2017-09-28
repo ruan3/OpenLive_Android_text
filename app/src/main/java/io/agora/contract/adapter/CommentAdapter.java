@@ -1,7 +1,9 @@
 package io.agora.contract.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +12,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
-import com.jaren.lib.view.LikeView;
 import com.shuyu.frescoutil.FrescoHelper;
 
 import java.util.ArrayList;
 
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
+import io.agora.contract.utils.HighLightKeyWordUtil;
 import io.agora.contract.utils.LogUtils;
 import io.agora.contract.view.CircleImageView;
 import io.agora.contract.view.MyJCVideoPlayerStandard;
@@ -72,6 +74,8 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     ArrayList<CommentBean> commentBeans;
     String url;
 
+    private OnItemClickListener mOnItemClickListener;
+
     public CommentAdapter(Context context,ArrayList<CommentBean> commentBeans){
         this.context = context;
         this.commentBeans = commentBeans;
@@ -91,8 +95,18 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        if(position > 0){
 
+            if (mOnItemClickListener != null) {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mOnItemClickListener.onItemClick(position, holder);
+                    }
+                });
+            }
+        }
         if(position == 0 ){
 
             TopViewHolder topViewHolder = (TopViewHolder) holder;
@@ -148,7 +162,15 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tv_comment_time.setText(commentBean.getTime());
             tv_comment_name.setText(commentBean.getName());
             tv_like.setText(commentBean.getLike_time());
-            tv_comment_content.setText(commentBean.getContent());
+            String content = commentBean.getContent();
+            String replyName = commentBean.getReplyName();
+            if(!TextUtils.isEmpty(replyName)){
+                LogUtils.e("获取到replyName-->"+replyName);
+                tv_comment_content.setText(HighLightKeyWordUtil.getHighLightKeyWord(Color.BLUE,content,replyName));
+            }else{
+                LogUtils.e("没有获取replyName");
+                tv_comment_content.setText(content);
+            }
             Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL).into(cv_comment_icon);
 
 
@@ -243,5 +265,14 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
         }
+    }
+
+    //设置点击事件
+    public void setOnItemClickLitener(OnItemClickListener mLitener) {
+        mOnItemClickListener = mLitener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(int position, RecyclerView.ViewHolder viewHolder);
     }
 }
