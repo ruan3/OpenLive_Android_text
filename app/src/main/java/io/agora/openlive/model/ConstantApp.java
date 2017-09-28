@@ -32,4 +32,5 @@ public class ConstantApp {
     public static final String ACTION_KEY_BROCAST_NAME = "brocast_name";
     public static final String ACTION_KEY_ONLINE_NUMBER = "onlineNumber";
     public static final String ACTION_KEY_LIVE_ID = "liveId";
+    public static final String ACTION_KEY_HEADER_URL = "headerUrl";
 }
