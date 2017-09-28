@@ -51,6 +51,7 @@ public class ICommentPresenterImpl implements ICommentPresenter {
                             commentBean.setName(comment.getName());
                             commentBean.setContent(comment.getContent());
                             commentBean.setLike_time(comment.getLike_time());
+                            commentBean.setReplyName(comment.getReplyName());
                             commentBeans.add(commentBean);
                         }
                         iComment.getDataResult(0,commentBeans);
@@ -90,4 +91,6 @@ public class ICommentPresenterImpl implements ICommentPresenter {
     public void updataFeedbck(FeedBackBean feedBackBean) {
 
     }
+
+
 }
