@@ -2,12 +2,17 @@ package io.agora.contract.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
+import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.inputmethod.InputMethodManager;
@@ -24,11 +29,14 @@ import com.shuyu.frescoutil.FrescoHelper;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.bmob.v3.BmobUser;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import io.agora.contract.adapter.CommentAdapter;
 import io.agora.contract.utils.Constants;
+import io.agora.contract.utils.HighLightKeyWordUtil;
 import io.agora.contract.utils.LogUtils;
 import io.agora.contract.view.MyJCVideoPlayerStandard;
 import io.agora.model.Comment;
@@ -89,6 +97,9 @@ public class CommentActivity extends BaseActivity implements IComment{
 
     ICommentPresenter iCommentPresenter;
     Comment comment;
+
+    int reply = 0;//标识是回复，还是评论。0：评论，1：回复
+    String replyName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,7 +187,18 @@ public class CommentActivity extends BaseActivity implements IComment{
                 String currentTime= DateFormat.format("yyyy-MM-dd hh:mm:ss", new Date()).toString();//当前更新时间
                 comment.setLike_time("1");//点赞数
                 commentBean.setLike_time("1");//点赞数
-                comment.setContent(content);//评论内容
+                if(reply == 1){
+
+                    content = "回复"+replyName+"："+content;
+                    commentBean.setReplyName(replyName);
+                    comment.setReplyName(replyName);
+                    comment.setContent(content);
+                    reply = 0;
+                    et_comment_content.setHint("不能忍了，让我说两句");
+                }else{
+
+                    comment.setContent(content);//评论内容
+                }
                 commentBean.setContent(content);
                 commentBean.setTime(currentTime);
                 commentBeens.add(commentBean);//加入到list中
@@ -188,6 +210,17 @@ public class CommentActivity extends BaseActivity implements IComment{
             }
         });
         iCommentPresenter.getData(contentId);
+
+        commentAdapter.setOnItemClickLitener(new CommentAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, RecyclerView.ViewHolder viewHolder) {
+
+                replyName = commentBeens.get(position).getName();
+                et_comment_content.setHint("回复"+replyName+":");
+                reply = 1;
+                showInputMethod(et_comment_content,true,500);
+            }
+        });
 
     }
 
@@ -233,4 +266,45 @@ public class CommentActivity extends BaseActivity implements IComment{
         }
 
     }
+
+    /**
+     * 将焦点移到输入框，弹起输入法
+     */
+    public void focusKeywordView(EditText edt) {
+        if (edt != null) {
+            edt.requestFocus();
+            edt.setSelection(getKeywordText(edt).length());
+            showInputMethod(edt, true, 500);
+        }
+    }
+
+    /**
+     * 弹起输入法
+     * @param edit
+     * @param delay
+     * @param delayTime
+     */
+    private void showInputMethod(final EditText edit, boolean delay, int delayTime) {
+        if (delay) {
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(
+                            Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(edit, 0);
+                    }
+
+                }
+            }, delayTime);
+        } else {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(edit, 0);
+        }
+    }
+    public String getKeywordText(EditText edt) {
+        return edt.getText().toString().trim();
+    }
+
 }
