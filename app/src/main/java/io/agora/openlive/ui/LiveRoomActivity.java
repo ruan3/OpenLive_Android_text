@@ -27,7 +27,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.luolc.emojirain.EmojiRainLayout;
 import com.ufreedom.floatingview.Floating;
 import com.ufreedom.floatingview.FloatingBuilder;
@@ -51,11 +54,16 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
 import io.agora.common.Constant;
+import io.agora.contract.activity.ComplainActivity;
+import io.agora.contract.adapter.ContentAdapter;
 import io.agora.contract.animation.PlaneFloating;
 import io.agora.contract.animation.StarFloating;
+import io.agora.contract.utils.CacheUtils;
 import io.agora.contract.utils.LogUtils;
+import io.agora.contract.view.CircleImageView;
 import io.agora.model.EventMsg;
 import io.agora.model.LiveVideos;
 import io.agora.model.MyUser;
@@ -133,11 +141,16 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
     TextView tv_online_pre;//显示在线人数
     TextView tv_like;//显示点赞数
     TextView tv_gift;//显示礼物数
+    TextView tv_tips_off;//举报直播
 
     String liveId;
     int preOnline;//上一次更新前人数
 
     String userName;
+    CircleImageView civ_header;//主播头像
+    String headerUrl;
+
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +162,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
             WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
             localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
         }
-
+        EventBus.getDefault().register(this);//注册EventBus
         mScreenWidth = UIUtils.getScreenWidth(this);
         mScreenHeight = UIUtils.getScreenWidth(this);
     }
@@ -183,10 +196,12 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
             throw new RuntimeException("Should not reach here");
         }
 
-        String roomName = i.getStringExtra(ConstantApp.ACTION_KEY_ROOM_NAME);
-        String broadcasterName = i.getStringExtra(ConstantApp.ACTION_KEY_BROCAST_NAME);
+        final String roomName = i.getStringExtra(ConstantApp.ACTION_KEY_ROOM_NAME);
+        final String broadcasterName = i.getStringExtra(ConstantApp.ACTION_KEY_BROCAST_NAME);
         Integer onlineNumber = i.getIntExtra(ConstantApp.ACTION_KEY_ONLINE_NUMBER,0);
         liveId = i.getStringExtra(ConstantApp.ACTION_KEY_LIVE_ID);
+        headerUrl = i.getStringExtra(ConstantApp.ACTION_KEY_HEADER_URL);
+        LogUtils.e("直播页面获取到主播头像---》"+headerUrl);
 
         anchorID = roomName;
 
@@ -217,7 +232,10 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         ly_leaving = (LinearLayout) findViewById(R.id.ly_leaving);
         ly_leaving.setVisibility(View.GONE);
 
+        tv_tips_off = (TextView) findViewById(R.id.tv_tip_off);
+
         ImageView btn_message = (ImageView) findViewById(R.id.btn_message);
+        civ_header = (CircleImageView) findViewById(R.id.civ_header);
 
         /**
          * 启动输入界面
@@ -263,8 +281,38 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
             //开启视频预览(startPreview)
             worker().preview(true, surfaceV, 0);
             broadcasterUI(button1, button2, button3);
+            tv_tips_off.setVisibility(View.GONE);//是主播就隐藏举报按钮
+            if(BmobUser.getCurrentUser(MyUser.class).getHead_icon()!=null){
+                 url = BmobUser.getCurrentUser(MyUser.class).getHead_icon().getUrl();
+            }else{
+                if(TextUtils.isEmpty(url)){
+                    url = BmobUser.getCurrentUser(MyUser.class).getAuthIconUrl();
+                }
+            }
+            //走正常注册登录流程，获取下来的直播数据
+            Glide.with(context).load(url).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_default_header)
+                    .error(R.drawable.ic_default_header).into(civ_header);
+
         } else {
             audienceUI(button1, button2, button3);
+            tv_tips_off.setVisibility(View.VISIBLE);//是观众就显示主播按钮
+            tv_tips_off.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //跳转到举报界面
+                    Intent intent = new Intent(context, ComplainActivity.class);
+                    intent.putExtra(ConstantApp.ACTION_KEY_BROCAST_NAME,broadcasterName);
+                    intent.putExtra(ConstantApp.ACTION_KEY_LIVE_ID,liveId);
+                    intent.putExtra(ConstantApp.ACTION_KEY_ROOM_NAME,roomName);
+                    startActivity(intent);
+
+                }
+            });
+            //走正常注册登录流程，获取下来的直播数据
+            Glide.with(context).load(headerUrl).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_default_header)
+                    .error(R.drawable.ic_default_header).into(civ_header);
         }
 
         worker().joinChannel(roomName, config().mUid);
@@ -307,6 +355,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         EventMsg eventMsg = new EventMsg();
         eventMsg.setMsg("Stop");
         EventBus.getDefault().post(eventMsg);
+
     }
 
     /**
@@ -533,6 +582,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
             String errorMsg = "Create data stream error happened " + mDataStreamId;
             log.warn(errorMsg);
             showLongToast(errorMsg);
+            LogUtils.e("发消息报错了aa--->");
             return;
         }
 
@@ -542,6 +592,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         }catch(UnsupportedEncodingException e){
             e.printStackTrace();
             encodeMsg = msgStr.getBytes();
+            LogUtils.e("发消息报错了--->"+e.toString());
         }
         LogUtils.e("直播界面发消息之前是否有mDataStreamId---->"+mDataStreamId+"是否有encodeMsg------>"+encodeMsg);
         rtcEngine.sendStreamMessage(mDataStreamId,encodeMsg);
@@ -693,36 +744,72 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         super.onDestroy();
         if (isBroadcaster(isAudience)) {
             //主播退出的方式
-            //先查询到数据的id
-            BmobQuery<LiveVideos> query = new BmobQuery<>();
-            query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
-            query.findObjects(new FindListener<LiveVideos>() {
-                @Override
-                public void done(List<LiveVideos> list, BmobException e) {
-                    if(list!=null&&list.size()>0){
-                        //查询成功，得到当前liveVideoId
-                        String liveId = list.get(0).getObjectId();
-                        LiveVideos liveVideos = list.get(0);
-                        liveVideos.setLiving(false);
-                        Log.e("Com","当前主播获得点赞数---->"+likes);
-                        liveVideos.increment("likes",likes);
-                        liveVideos.increment("gift_times",gifts);
-                        //更新主播状态
-                        liveVideos.update(liveId, new UpdateListener() {
-                            @Override
-                            public void done(BmobException e) {
-                                if(e==null){
-                                    Log.e("Com","LivingRoom-主播离开房间成功---->");
-                                    likes = 0;
-                                }else{
-                                    Log.e("Com","livingRoom-主播离开房间失败---->"+e.toString());
-                                }
-                            }
-                        });
 
+            String livid = CacheUtils.getString(context, io.agora.contract.utils.Constants.liveRoomID);
+            if(!TextUtils.isEmpty(livid)){
+                LogUtils.e("有roomid--->"+livid);
+                BmobQuery<LiveVideos> query = new BmobQuery<LiveVideos>();
+                query.getObject(livid, new QueryListener<LiveVideos>() {
+
+                    @Override
+                    public void done(LiveVideos liveVideos, BmobException e) {
+                        if(e==null){
+                            LogUtils.e("数据中有房间--->");
+                            liveVideos.setLiving(false);
+                            Log.e("Com","当前主播获得点赞数---->"+likes);
+                            liveVideos.increment("likes",likes);
+                            liveVideos.increment("gift_times",gifts);
+                            //更新主播状态
+                            liveVideos.update(liveId, new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    if(e==null){
+                                        Log.e("Com","LivingRoom-主播离开房间成功---->");
+                                        likes = 0;
+                                    }else{
+                                        Log.e("Com","livingRoom-主播离开房间失败---->"+e.toString());
+                                    }
+                                }
+                            });
+                        }else{
+                            LogUtils.e("查询房间出错--->"+e.toString());
+                        }
                     }
-                }
-            });
+
+                });
+            }else {
+
+                //先查询到数据的id
+                BmobQuery<LiveVideos> query = new BmobQuery<>();
+                query.addWhereEqualTo("anchorName", BmobUser.getCurrentUser().getObjectId());
+                query.findObjects(new FindListener<LiveVideos>() {
+                    @Override
+                    public void done(List<LiveVideos> list, BmobException e) {
+                        if (list != null && list.size() > 0) {
+                            //查询成功，得到当前liveVideoId
+                            String liveId = list.get(0).getObjectId();
+                            LiveVideos liveVideos = list.get(0);
+                            liveVideos.setLiving(false);
+                            Log.e("Com", "当前主播获得点赞数---->" + likes);
+                            liveVideos.increment("likes", likes);
+                            liveVideos.increment("gift_times", gifts);
+                            //更新主播状态
+                            liveVideos.update(liveId, new UpdateListener() {
+                                @Override
+                                public void done(BmobException e) {
+                                    if (e == null) {
+                                        Log.e("Com", "LivingRoom-主播离开房间成功---->");
+                                        likes = 0;
+                                    } else {
+                                        Log.e("Com", "livingRoom-主播离开房间失败---->" + e.toString());
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                });
+            }
 
         }else{
             //观众退出的方式
@@ -808,6 +895,7 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
         eventMsg.setMsg("Start");
         EventBus.getDefault().post(eventMsg);
         mUidsList.clear();
+        EventBus.getDefault().unregister(this);
     }
 
     private void doLeaveChannel() {
@@ -1188,8 +1276,19 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
 //                    iContentFragmentPresenter.UpdataLikeandGif(liveId,likes,gifts);
 //                }
 //            }
+            int complainTimes = liveVideos.getComplainTimes();
+            if(complainTimes>10){
+                Toast.makeText(context,"主播被多人投诉，3秒后自动退出直播",Toast.LENGTH_LONG).show();
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                finish();
+            }
             tv_online_pre.setText("在线人数："+current+"人");
             preOnline = current;
+
         }
 
     }
@@ -1229,6 +1328,13 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
                 liveId = videos.getObjectId();
             }
         }
+        if (!isBroadcaster(isAudience)) {
+            String msgStr = "欢迎~"+BmobUser.getCurrentUser(MyUser.class).getUser_id_name()+"进场~";
+            sendChannelMsg(msgStr);
+            Message msg = new Message(Message.MSG_TYPE_TEXT,
+                    new User(config().mUid, String.valueOf(config().mUid)), msgStr);
+            notifyMessageChanged(msg);
+        }
 
     }
 
@@ -1243,10 +1349,36 @@ public class LiveRoomActivity extends BaseActivity implements AGEventHandler , I
     }
 
     /**
+     * 主界面不需要支持滑动返回，重写该方法永久禁用当前界面的滑动返回功能
+     *
+     * @return
+     */
+    @Override
+    public boolean isSupportSwipeBack() {
+        return false;
+    }
+
+    /**
      * 获取到的礼物数，更新到textView上
      * @param gift
      */
     public void giftSetText(int gift){
         tv_gift.setText("礼物数："+gift);
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EventMsg eventMsg){
+
+        LogUtils.e("EventBus举报页面接受到消息----->"+eventMsg.getMsg());
+        if(eventMsg!=null){
+
+            if("liveRoomClose".equals(eventMsg.getMsg())){
+                finish();
+            }else{
+
+            }
+        }
+
     }
 }
