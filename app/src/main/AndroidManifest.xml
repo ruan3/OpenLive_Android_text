@@ -375,6 +375,11 @@
             android:windowSoftInputMode="stateHidden|adjustResize"
             ></activity>
 
+        <activity android:name="io.agora.contract.activity.ComplainActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            ></activity>
+
     </application>
 
 </manifest>
